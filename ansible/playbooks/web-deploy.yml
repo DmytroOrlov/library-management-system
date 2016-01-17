@@ -1,0 +1,15 @@
+---
+# file: web-deploy.yml
+- hosts: web
+  user: ubuntu
+
+  tasks:
+    - unarchive: src=../../server/target/universal/server-0.1-SNAPSHOT.tgz dest=~/
+    - template: src=templates/server.service dest=/etc/systemd/system/server.service
+      sudo: yes
+    - command: systemctl daemon-reload
+      sudo: yes
+    - command: systemctl enable server
+      sudo: yes
+    - service: name=server state=restarted
+      sudo: yes

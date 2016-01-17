@@ -1,0 +1,11 @@
+[Unit]
+Description=Starts web
+After=syslog.target network.target
+
+[Service]
+Type=simple
+# This points to the shell script that activator created for you
+ExecStart=/home/ubuntu/server-0.1-SNAPSHOT/bin/server
+
+[Install]
+WantedBy=multi-user.target
