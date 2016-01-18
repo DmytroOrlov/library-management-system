@@ -4,6 +4,8 @@
   user: ubuntu
 
   tasks:
+    - command: rm -rf ~/server-0.1-SNAPSHOT
+      sudo: yes
     - unarchive: src=../../server/target/universal/server-0.1-SNAPSHOT.tgz dest=~/
     - template: src=templates/server.service dest=/etc/systemd/system/server.service
       sudo: yes
