@@ -7,7 +7,7 @@ import play.api.mvc._
 import play.api.Play.current
 import concurrent.duration._
 
-object StreamController extends Controller with JSONFormats {
+class StreamController extends Controller with JSONFormats {
   def streams = Action {
     Ok(views.html.streams())
   }

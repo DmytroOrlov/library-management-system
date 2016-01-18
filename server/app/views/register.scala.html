@@ -1,3 +1,15 @@
+@(person: Form[CreatePersonForm])(implicit messages: Messages)
+
+@import helper._
+
 @main("Register") {
     <h1>Register</h1>
+    @form(routes.RegisterController.add()) {
+        @inputText(person("name"))
+        @inputText(person("age"))
+
+        <div class="buttons">
+            <input type="submit" value="Add Person"/>
+        </div>
+    }
 }

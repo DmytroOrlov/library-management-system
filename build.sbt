@@ -16,6 +16,7 @@ lazy val testSettings = Seq(
 lazy val server = (project in file("server"))
   .settings(commonSettings ++ testSettings: _*)
   .settings(
+    routesGenerator := InjectedRoutesGenerator,
     scalaJSProjects := clients,
     pipelineStages := Seq(scalaJSProd, gzip),
     libraryDependencies ++= Seq(
