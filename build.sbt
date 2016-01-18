@@ -25,7 +25,10 @@ lazy val server = (project in file("server"))
       "org.webjars.bower" % "epoch" % "0.6.0",
       "org.webjars" % "d3js" % "3.5.12",
       "org.monifu" %% "monifu" % "1.0",
-      "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0"
+      "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
+      "com.typesafe.play" %% "play-slick" % "1.1.1",
+      "com.typesafe.play" %% "play-slick-evolutions" % "1.1.1",
+      "com.h2database" % "h2" % "1.4.190"
     )
   ).enablePlugins(PlayScala)
   .aggregate(clients.map(projectToRef): _*)
