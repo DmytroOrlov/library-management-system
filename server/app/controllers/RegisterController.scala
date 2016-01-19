@@ -21,8 +21,11 @@ class RegisterController @Inject()(repo: PersonRepository, val messagesApi: Mess
     )(CreatePersonForm.apply)(CreatePersonForm.unapply)
   }
 
-  def register = Action {
-    Ok(views.html.register(personForm))
+  def register = Action { implicit request =>
+    request.session.get(username).fold(Ok(views.html.register(personForm))) { _ =>
+      Redirect(routes.Application.index)
+        .flashing(flashToUser -> already_registered)
+    }
   }
 
   def add() = Action.async { implicit request =>
@@ -54,4 +57,5 @@ object RegisterController {
   val username = "username"
   val flashToUser = "flashToUser"
   val user_registered = "Thank you for your registration"
+  val already_registered = "You are already registered"
 }

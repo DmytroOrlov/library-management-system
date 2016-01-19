@@ -1,9 +1,12 @@
 package controllers
 
+import controllers.RegisterController._
 import play.api.mvc._
 
 class Application extends Controller {
   def index = Action { implicit request =>
-    Ok(views.html.index())
+    request.session.get(username).fold(Redirect(routes.RegisterController.register)) { _ =>
+      Ok(views.html.index())
+    }
   }
 }
