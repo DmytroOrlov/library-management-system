@@ -34,10 +34,10 @@ class RegisterController @Inject()(repo: PersonRepository, val messagesApi: Mess
         Future.successful(Ok(views.html.register(errorForm)))
       },
       person => {
-        repo.create(person.name, person.age).map { _ =>
+        repo.create(person.name, person.age).map { p =>
           Redirect(routes.Application.index)
             .flashing(flashToUser -> user_registered)
-            .withSession(username -> person.name)
+            .withSession(username -> p.name)
         }
       }
     )
@@ -56,6 +56,9 @@ object RegisterController {
   val maxAge = 140
   val username = "username"
   val flashToUser = "flashToUser"
+
   val user_registered = "Thank you for your registration"
+  val logout_done = "Logout done"
   val already_registered = "You are already registered"
+  val username_exists = "Username already in use, Please choose another"
 }

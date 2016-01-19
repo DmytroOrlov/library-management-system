@@ -4,6 +4,7 @@
 
 # Home page
 GET        /                          controllers.Application.index
+GET        /logout                    controllers.Application.logout
 
 GET        /register                  controllers.RegisterController.register
 POST       /register                  controllers.RegisterController.add

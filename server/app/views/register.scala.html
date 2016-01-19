@@ -1,8 +1,8 @@
-@(person: Form[CreatePersonForm])(implicit messages: Messages)
+@(person: Form[CreatePersonForm])(implicit messages: Messages, flash: Flash)
 
 @import helper._
 
-@main("Register") {
+@mainFlashToUser("Register") {
     <h1>Register</h1>
     @form(routes.RegisterController.add()) {
         @inputText(person("name"))

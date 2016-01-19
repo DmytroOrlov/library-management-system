@@ -9,4 +9,14 @@ class Application extends Controller {
       Ok(views.html.index())
     }
   }
+
+  def logout = Action { implicit request =>
+    request.session.get(username).fold(newSession) { _ =>
+      newSession.flashing(flashToUser -> logout_done)
+    }
+  }
+
+  def newSession =
+    Redirect(routes.RegisterController.register)
+      .withNewSession
 }
