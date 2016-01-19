@@ -38,6 +38,9 @@ class RegisterController @Inject()(repo: PersonRepository, val messagesApi: Mess
           Redirect(routes.Application.index)
             .flashing(flashToUser -> user_registered)
             .withSession(username -> p.name)
+        }.recover {
+          case _ => Ok(views.html.register(personForm.bindFromRequest
+            .withError("name", name_registered)))
         }
       }
     )
@@ -60,5 +63,5 @@ object RegisterController {
   val user_registered = "Thank you for your registration"
   val logout_done = "Logout done"
   val already_registered = "You are already registered"
-  val username_exists = "Username already in use, Please choose another"
+  val name_registered = "Name already registered, Please choose another"
 }

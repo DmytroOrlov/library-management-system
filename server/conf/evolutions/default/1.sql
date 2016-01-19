@@ -2,7 +2,7 @@
 
 create table "people" (
   "id" bigserial primary key,
-  "name" varchar not null,
+  "name" varchar not null unique,
   "age" int not null
 );
 
