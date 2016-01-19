@@ -31,7 +31,7 @@ class RegisterController @Inject()(repo: PersonRepository, val messagesApi: Mess
   def add() = Action.async { implicit request =>
     personForm.bindFromRequest.fold(
       errorForm => {
-        Future.successful(Ok(views.html.register(errorForm)))
+        Future.successful(BadRequest(views.html.register(errorForm)))
       },
       person => {
         repo.create(person.name, person.age).map { p =>
