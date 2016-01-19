@@ -1,6 +1,7 @@
 package controllers
 
 import com.google.inject.Inject
+import controllers.RegisterController._
 import dal.PersonRepository
 import play.api.data.Form
 import play.api.data.Forms._
@@ -16,7 +17,7 @@ class RegisterController @Inject()(repo: PersonRepository, val messagesApi: Mess
   val personForm: Form[CreatePersonForm] = Form {
     mapping(
       "name" -> nonEmptyText,
-      "age" -> number.verifying(min(0), max(140))
+      "age" -> number.verifying(min(0), max(maxAge))
     )(CreatePersonForm.apply)(CreatePersonForm.unapply)
   }
 
@@ -32,6 +33,8 @@ class RegisterController @Inject()(repo: PersonRepository, val messagesApi: Mess
       person => {
         repo.create(person.name, person.age).map { _ =>
           Redirect(routes.Application.index)
+            .flashing(flashToUser -> user_registered)
+            .withSession(username -> person.name)
         }
       }
     )
@@ -45,3 +48,10 @@ class RegisterController @Inject()(repo: PersonRepository, val messagesApi: Mess
 }
 
 case class CreatePersonForm(name: String, age: Int)
+
+object RegisterController {
+  val maxAge = 140
+  val username = "username"
+  val flashToUser = "flashToUser"
+  val user_registered = "Thank you for your registration"
+}
