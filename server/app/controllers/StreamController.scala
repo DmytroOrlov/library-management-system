@@ -1,5 +1,6 @@
 package controllers
 
+import controllers.RegisterController._
 import monifu.concurrent.Implicits.globalScheduler
 import engine.{SimpleWebSocketActor, BackPressuredWebSocketActor, DataProducer}
 import play.api.libs.json.JsValue
@@ -8,8 +9,11 @@ import play.api.Play.current
 import concurrent.duration._
 
 class StreamController extends Controller with JSONFormats {
-  def streams = Action {
-    Ok(views.html.streams())
+  def streams = Action { implicit request =>
+    request.session.get(username).fold(Redirect(routes.RegisterController.register)) { _ =>
+      Ok(views.html.streams())
+    }
+
   }
 
   def backPressuredStream(periodMillis: Int, seed: Long) =
