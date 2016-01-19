@@ -24,7 +24,7 @@ class RegisterController @Inject()(repo: PersonRepository, val messagesApi: Mess
   def register = Action { implicit request =>
     request.session.get(username).fold(Ok(views.html.register(personForm))) { _ =>
       Redirect(routes.Application.index)
-        .flashing(flashToUser -> already_registered)
+        .flashing(flashToUser -> alreadyRegistered)
     }
   }
 
@@ -36,11 +36,11 @@ class RegisterController @Inject()(repo: PersonRepository, val messagesApi: Mess
       person => {
         repo.create(person.name, person.age).map { p =>
           Redirect(routes.Application.index)
-            .flashing(flashToUser -> user_registered)
+            .flashing(flashToUser -> userRegistered)
             .withSession(username -> p.name)
         }.recover {
           case _ => Ok(views.html.register(personForm.bindFromRequest
-            .withError("name", name_registered)))
+            .withError("name", nameRegistered)))
         }
       }
     )
@@ -60,8 +60,7 @@ object RegisterController {
   val username = "username"
   val flashToUser = "flashToUser"
 
-  val user_registered = "Thank you for your registration"
-  val logout_done = "Logout done"
-  val already_registered = "You are already registered"
-  val name_registered = "Name already registered, Please choose another"
+  val userRegistered = "Thank you for your registration"
+  val alreadyRegistered = "You are already registered"
+  val nameRegistered = "Name already registered, Please choose another"
 }
