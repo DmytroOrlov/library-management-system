@@ -35,8 +35,8 @@ class PersonRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(impli
     /** The name column */
     def name = column[String]("name")
 
-    /** The age column */
-    def age = column[Int]("age")
+    /** The password column */
+    def password = column[String]("password")
 
     /**
      * This is the tables default "projection".
@@ -46,7 +46,7 @@ class PersonRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(impli
      * In this case, we are simply passing the id, name and page parameters to the Person case classes
      * apply and unapply methods.
      */
-    def * = (id, name, age) <>((Person.apply _).tupled, Person.unapply)
+    def * = (id, name, password) <>((Person.apply _).tupled, Person.unapply)
   }
 
   /**
@@ -55,21 +55,21 @@ class PersonRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(impli
   private val people = TableQuery[PeopleTable]
 
   /**
-   * Create a person with the given name and age.
+   * Create a person with the given name and password.
    *
    * This is an asynchronous operation, it will return a future of the created person, which can be used to obtain the
    * id for that person.
    */
-  def create(name: String, age: Int): Future[Person] = db.run {
-    // We create a projection of just the name and age columns, since we're not inserting a value for the id column
-    (people.map(p => (p.name, p.age))
+  def create(name: String, password: String): Future[Person] = db.run {
+    // We create a projection of just the name and password columns, since we're not inserting a value for the id column
+    (people.map(p => (p.name, p.password))
       // Now define it to return the id, because we want to know what id was generated for the person
       returning people.map(_.id)
       // And we define a transformation for the returned value, which combines our original parameters with the
       // returned id
-      into ((nameAge, id) => Person(id, nameAge._1, nameAge._2))
+      into ((namePassword, id) => Person(id, namePassword._1, namePassword._2))
       // And finally, insert the person into the database
-      ) +=(name, age)
+      ) +=(name, password)
   }
 
   /**

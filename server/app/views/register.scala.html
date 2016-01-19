@@ -6,7 +6,8 @@
     <h1>Register</h1>
     @form(routes.RegisterController.add()) {
         @inputText(person("name"))
-        @inputText(person("age"))
+        @inputPassword(person("password"))
+        @inputPassword(person("verify"))
 
         <div class="buttons">
             <input type="submit" value="Register"/>
