@@ -7,9 +7,9 @@ GET        /                          controllers.Application.index
 GET        /logout                    controllers.Application.logout
 
 GET        /login                     controllers.UserController.getLogin
-POST       /login                     controllers.UserController.login
+POST       /login                     controllers.UserController.postLogin
 GET        /register                  controllers.UserController.getRegister
-POST       /register                  controllers.UserController.register
+POST       /register                  controllers.UserController.postRegister
 GET        /register/all              controllers.UserController.all
 
 GET        /streams                   controllers.StreamController.streams

@@ -13,7 +13,7 @@ class Application extends Controller {
 
   def logout = Action { implicit request =>
     request.session.get(username).fold(Redirect(routes.UserController.getRegister).withNewSession) { _ =>
-      Redirect(routes.UserController.login)
+      Redirect(routes.UserController.getLogin)
         .withNewSession
         .flashing(flashToUser -> logoutDone)
     }

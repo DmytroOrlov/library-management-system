@@ -10,10 +10,9 @@ import concurrent.duration._
 
 class StreamController extends Controller with JSONFormats {
   def streams = Action { implicit request =>
-    request.session.get(username).fold(Redirect(routes.UserController.register)) { _ =>
+    request.session.get(username).fold(Redirect(routes.UserController.getRegister)) { _ =>
       Ok(views.html.streams())
     }
-
   }
 
   def backPressuredStream(periodMillis: Int, seed: Long) =
