@@ -4,7 +4,7 @@ import java.security.MessageDigest
 
 import com.google.inject.Inject
 import com.typesafe.scalalogging.StrictLogging
-import controllers.RegisterController._
+import controllers.UserController._
 import dal.PersonRepository
 import play.api.data.Forms._
 import play.api.data.{Form, FormError}
@@ -16,7 +16,7 @@ import sun.misc.BASE64Encoder
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Random
 
-class RegisterController @Inject()(repo: PersonRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport with StrictLogging {
+class UserController @Inject()(repo: PersonRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport with StrictLogging {
 
   val personForm: Form[CreatePersonForm] = Form {
     mapping(
@@ -81,7 +81,7 @@ class RegisterController @Inject()(repo: PersonRepository, val messagesApi: Mess
     personForm.bindFromRequest.fold(
       errorForm => {
         Future.successful(BadRequest(views.html.register(
-          if (errorForm.errors.collectFirst({ case FormError(_, List(RegisterController.`passwordsNotMatched`), _) => true }).nonEmpty)
+          if (errorForm.errors.collectFirst({ case FormError(_, List(UserController.`passwordsNotMatched`), _) => true }).nonEmpty)
             errorForm.withError("password", passwordsNotMatched)
           else errorForm
         )))
@@ -113,7 +113,7 @@ case class CreatePersonForm(name: String, password: String, verify: String)
 
 case class LoginForm(name: String, password: String)
 
-object RegisterController {
+object UserController {
   val username = "username"
   val flashToUser = "flashToUser"
 

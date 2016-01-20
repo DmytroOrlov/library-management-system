@@ -1,6 +1,6 @@
 package controllers
 
-import controllers.RegisterController._
+import controllers.UserController._
 import monifu.concurrent.Implicits.globalScheduler
 import engine.{SimpleWebSocketActor, BackPressuredWebSocketActor, DataProducer}
 import play.api.libs.json.JsValue
@@ -10,7 +10,7 @@ import concurrent.duration._
 
 class StreamController extends Controller with JSONFormats {
   def streams = Action { implicit request =>
-    request.session.get(username).fold(Redirect(routes.RegisterController.register)) { _ =>
+    request.session.get(username).fold(Redirect(routes.UserController.register)) { _ =>
       Ok(views.html.streams())
     }
 
