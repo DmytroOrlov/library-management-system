@@ -104,6 +104,7 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
 
   def all = Action.async {
     repo.list().map { users =>
+      import models.UserFormat.userFormat
       Ok(Json.toJson(users))
     }
   }

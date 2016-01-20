@@ -46,7 +46,7 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
      * In this case, we are simply passing the id, name and page parameters to the User case classes
      * apply and unapply methods.
      */
-    def * = (name, password, id.?) <> ((User.apply _).tupled, User.unapply)
+    def * = (name, password, id.?) <> (User.tupled, User.unapply)
   }
 
   /**
