@@ -27,7 +27,7 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
   /**
    * Here we define the table. It will have a name of users
    */
-  private class PeopleTable(tag: Tag) extends Table[User](tag, "users") {
+  private class UserTable(tag: Tag) extends Table[User](tag, "users") {
 
     /** The ID column, which is the primary key, and auto incremented */
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
@@ -52,7 +52,7 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
   /**
    * The starting point for all queries on the users table.
    */
-  private val users = TableQuery[PeopleTable]
+  private val users = TableQuery[UserTable]
 
   /**
    * Create a user with the given name and password.
