@@ -4,7 +4,7 @@
 
 @mainFlashToUser("Register") {
     <h1>Register</h1>
-    @form(routes.RegisterController.add()) {
+    @form(routes.RegisterController.register()) {
         @inputText(person("name"))
         @inputPassword(person("password"))
         @inputPassword(person("verify"))
@@ -12,5 +12,6 @@
         <div class="buttons">
             <input type="submit" value="Register"/>
         </div>
+        <div><a href="@routes.RegisterController.getLogin()">Login</a></div>
     }
 }

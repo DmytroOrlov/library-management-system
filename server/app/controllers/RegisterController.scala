@@ -23,22 +23,66 @@ class RegisterController @Inject()(repo: PersonRepository, val messagesApi: Mess
       "name" -> nonEmptyText,
       "password" -> nonEmptyText,
       "verify" -> nonEmptyText
-    )(CreatePersonForm.apply)(CreatePersonForm.unapply) verifying(passwordNotMatched, validatePassword _)
+    )(CreatePersonForm.apply)(CreatePersonForm.unapply) verifying(passwordsNotMatched, validatePassword _)
   }
 
-  def register = Action { implicit request =>
+  val loginForm: Form[LoginForm] = Form {
+    mapping(
+      "name" -> nonEmptyText,
+      "password" -> nonEmptyText
+    )(LoginForm.apply)(LoginForm.unapply)
+  }
+
+  def getLogin = Action { implicit request =>
+    request.session.get(username).fold(Ok(views.html.login(loginForm))) { name =>
+      Redirect(routes.Application.index)
+        .flashing(flashToUser -> s"$name $loggedIn")
+    }
+  }
+
+  def getRegister = Action { implicit request =>
     request.session.get(username).fold(Ok(views.html.register(personForm))) { _ =>
       Redirect(routes.Application.index)
         .flashing(flashToUser -> alreadyRegistered)
     }
   }
 
-  def add() = Action.async { implicit request =>
+  def login() = Action.async { implicit request =>
+    def wrongPassword = BadRequest(
+      views.html.login(loginForm.bindFromRequest
+        .withError("password", passwordNotMatchTheName)
+      )
+    )
+
+    loginForm.bindFromRequest.fold(
+      errorForm => {
+        Future.successful(BadRequest(views.html.login(errorForm)))
+      },
+      person => {
+        repo.password(person.name).map {
+          _.fold(wrongPassword) { hashedAndSalted =>
+            val salt = hashedAndSalted.split(",")(1)
+            if (hashedAndSalted != passwordHash(person.password, salt)) wrongPassword
+            else Redirect(routes.Application.index)
+              .flashing(flashToUser -> s"${person.name} $loggedIn")
+              .withSession(username -> person.name)
+          }
+        }.recover {
+          case e =>
+            logger.error(e.getMessage, e)
+            Ok(views.html.login(loginForm.bindFromRequest
+              .withError("password", errorDuringPasswordCheck)))
+        }
+      }
+    )
+  }
+
+  def register() = Action.async { implicit request =>
     personForm.bindFromRequest.fold(
       errorForm => {
         Future.successful(BadRequest(views.html.register(
-          if (errorForm.errors.collectFirst({ case FormError(_, List(RegisterController.passwordNotMatched), _) => true }).nonEmpty)
-            errorForm.withError("password", passwordNotMatched)
+          if (errorForm.errors.collectFirst({ case FormError(_, List(RegisterController.`passwordsNotMatched`), _) => true }).nonEmpty)
+            errorForm.withError("password", passwordsNotMatched)
           else errorForm
         )))
       },
@@ -58,7 +102,7 @@ class RegisterController @Inject()(repo: PersonRepository, val messagesApi: Mess
     )
   }
 
-  def get = Action.async {
+  def all = Action.async {
     repo.list().map { people =>
       Ok(Json.toJson(people))
     }
@@ -67,14 +111,19 @@ class RegisterController @Inject()(repo: PersonRepository, val messagesApi: Mess
 
 case class CreatePersonForm(name: String, password: String, verify: String)
 
+case class LoginForm(name: String, password: String)
+
 object RegisterController {
   val username = "username"
   val flashToUser = "flashToUser"
 
   val userRegistered = "Thank you for your registration"
   val alreadyRegistered = "You are already registered"
+  val loggedIn = "logged in"
   val nameRegistered = "Name already registered, Please choose another"
-  val passwordNotMatched = "Passwords not matched"
+  val passwordsNotMatched = "Passwords not matched"
+  val passwordNotMatchTheName = "Password not match the name"
+  val errorDuringPasswordCheck = "Error during password check"
 
   def validatePassword(f: CreatePersonForm) = f.password.equals(f.verify)
 

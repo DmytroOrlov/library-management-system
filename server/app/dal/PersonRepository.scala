@@ -72,6 +72,10 @@ class PersonRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(impli
       ) +=(name, password)
   }
 
+  def password(name: String): Future[Option[String]] = db.run(
+    people.filter(_.name === name).map(_.password).result
+  ).map(_.headOption)
+
   /**
    * List all the people in the database.
    */
