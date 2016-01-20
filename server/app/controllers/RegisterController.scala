@@ -59,7 +59,7 @@ class RegisterController @Inject()(repo: PersonRepository, val messagesApi: Mess
         Future.successful(BadRequest(views.html.login(errorForm)))
       },
       person => {
-        repo.password(person.name).map {
+        repo.passwordFor(person.name).map {
           _.fold(wrongPassword) { hashedAndSalted =>
             val salt = hashedAndSalted.split(",")(1)
             if (hashedAndSalted != passwordHash(person.password, salt)) wrongPassword
