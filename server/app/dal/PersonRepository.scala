@@ -2,7 +2,7 @@ package dal
 
 import javax.inject.{Inject, Singleton}
 
-import models.Person
+import models.User
 import play.api.db.slick.DatabaseConfigProvider
 import slick.driver.JdbcProfile
 
@@ -27,7 +27,7 @@ class PersonRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(impli
   /**
    * Here we define the table. It will have a name of users
    */
-  private class PeopleTable(tag: Tag) extends Table[Person](tag, "users") {
+  private class PeopleTable(tag: Tag) extends Table[User](tag, "users") {
 
     /** The ID column, which is the primary key, and auto incremented */
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
@@ -46,7 +46,7 @@ class PersonRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(impli
      * In this case, we are simply passing the id, name and page parameters to the Person case classes
      * apply and unapply methods.
      */
-    def * = (id, name, password) <>((Person.apply _).tupled, Person.unapply)
+    def * = (id, name, password) <>((User.apply _).tupled, User.unapply)
   }
 
   /**
@@ -60,14 +60,14 @@ class PersonRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(impli
    * This is an asynchronous operation, it will return a future of the created person, which can be used to obtain the
    * id for that person.
    */
-  def create(name: String, password: String): Future[Person] = db.run {
+  def create(name: String, password: String): Future[User] = db.run {
     // We create a projection of just the name and password columns, since we're not inserting a value for the id column
     (users.map(p => (p.name, p.password))
       // Now define it to return the id, because we want to know what id was generated for the person
       returning users.map(_.id)
       // And we define a transformation for the returned value, which combines our original parameters with the
       // returned id
-      into ((namePassword, id) => Person(id, namePassword._1, namePassword._2))
+      into ((namePassword, id) => User(id, namePassword._1, namePassword._2))
       // And finally, insert the person into the database
       ) +=(name, password)
   }
@@ -79,7 +79,7 @@ class PersonRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(impli
   /**
    * List all the users in the database.
    */
-  def list(): Future[Seq[Person]] = db.run {
+  def list(): Future[Seq[User]] = db.run {
     users.result
   }
 }
