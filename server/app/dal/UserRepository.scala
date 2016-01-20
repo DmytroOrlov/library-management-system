@@ -3,6 +3,7 @@ package dal
 import javax.inject.{Inject, Singleton}
 
 import models.User
+import monifu.reactive.Observable
 import play.api.db.slick.DatabaseConfigProvider
 import slick.driver.JdbcProfile
 
@@ -81,5 +82,5 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
   /**
    * List all the users in the database.
    */
-  def list(): Future[Seq[User]] = db.run(users.result)
+  def list() = Observable.fromReactivePublisher(db.stream(users.result))
 }
