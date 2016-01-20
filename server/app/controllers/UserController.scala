@@ -105,8 +105,6 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
       errorForm.withError("password", passwordsNotMatched)
     else errorForm
 
-  import models.UserFormat._
-
   implicit val scheduler = Scheduler(ec)
 
   def all = Action { implicit request =>
@@ -116,7 +114,7 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
           chan.push(next)
           Continue
         }, error => chan.end(error), () => chan.end())
-      }).map(userWrites.writes))
+      }))
     }
   }
 }
