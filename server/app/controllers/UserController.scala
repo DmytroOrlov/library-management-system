@@ -39,7 +39,7 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
   def getLogin = Action { implicit request =>
     request.session.get(username).fold(Ok(views.html.login(loginForm))) { name =>
       Redirect(routes.Application.index)
-        .flashing(flashToUser -> s"$name $loggedIn")
+        .flashing(flashToUser -> s"$loggedInAs$name")
     }
   }
 
@@ -67,7 +67,7 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
             val salt = hashedAndSalted.split(",")(1)
             if (hashedAndSalted != passwordHash(user.password, salt)) wrongPassword
             else Redirect(routes.Application.index)
-              .flashing(flashToUser -> s"${user.name} $loggedIn")
+              .flashing(flashToUser -> s"$loggedInAs${user.name}")
               .withSession(username -> user.name)
           }
         }.recover {
@@ -131,7 +131,7 @@ object UserController {
 
   val userRegistered = "Thank you for your registration"
   val alreadyRegistered = "You are already registered"
-  val loggedIn = "logged in"
+  val loggedInAs = "Logged in as "
   val nameRegistered = "Name already registered, Please choose another"
   val passwordsNotMatched = "Passwords not matched"
   val passwordNotMatchTheName = "Password not match the name"
