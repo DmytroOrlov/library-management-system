@@ -1,7 +1,7 @@
 # --- !Ups
 
 CREATE TABLE "users" (
-  "id" BIGSERIAL PRIMARY KEY,
+  "id" SERIAL PRIMARY KEY,
   "name" VARCHAR NOT NULL UNIQUE,
   "password" VARCHAR NOT NULL
 );

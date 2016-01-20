@@ -30,7 +30,7 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
   private class PeopleTable(tag: Tag) extends Table[User](tag, "users") {
 
     /** The ID column, which is the primary key, and auto incremented */
-    def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
     /** The name column */
     def name = column[String]("name")
@@ -73,7 +73,7 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
   }
 
   def passwordFor(name: String): Future[Option[String]] = db.run(
-    users.filter(_.name === name).map(_.password).result
+    (for (u <- users; if u.name === name) yield u.password).result
   ).map(_.headOption)
 
   /**
