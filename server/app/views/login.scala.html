@@ -1,12 +1,12 @@
-@(person: Form[LoginForm])(implicit messages: Messages, flash: Flash)
+@(user: Form[LoginForm])(implicit messages: Messages, flash: Flash)
 
 @import helper._
 
 @mainFlashToUser("Login") {
     <h1>Login</h1>
     @form(routes.UserController.login()) {
-        @inputText(person("name"))
-        @inputPassword(person("password"))
+        @inputText(user("name"))
+        @inputPassword(user("password"))
 
         <div class="buttons">
             <input type="submit" value="Login"/>

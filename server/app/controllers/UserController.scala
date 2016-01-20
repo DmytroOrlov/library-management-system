@@ -18,12 +18,12 @@ import scala.util.Random
 
 class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport with StrictLogging {
 
-  val personForm: Form[CreatePersonForm] = Form {
+  val registerForm: Form[RegisterUserForm] = Form {
     mapping(
       "name" -> nonEmptyText,
       "password" -> nonEmptyText,
       "verify" -> nonEmptyText
-    )(CreatePersonForm.apply)(CreatePersonForm.unapply) verifying(passwordsNotMatched, validatePassword _)
+    )(RegisterUserForm.apply)(RegisterUserForm.unapply) verifying(passwordsNotMatched, validatePassword _)
   }
 
   val loginForm: Form[LoginForm] = Form {
@@ -41,7 +41,7 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
   }
 
   def getRegister = Action { implicit request =>
-    request.session.get(username).fold(Ok(views.html.register(personForm))) { _ =>
+    request.session.get(username).fold(Ok(views.html.register(registerForm))) { _ =>
       Redirect(routes.Application.index)
         .flashing(flashToUser -> alreadyRegistered)
     }
@@ -58,14 +58,14 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
       errorForm => {
         Future.successful(BadRequest(views.html.login(errorForm)))
       },
-      person => {
-        repo.passwordFor(person.name).map {
+      user => {
+        repo.passwordFor(user.name).map {
           _.fold(wrongPassword) { hashedAndSalted =>
             val salt = hashedAndSalted.split(",")(1)
-            if (hashedAndSalted != passwordHash(person.password, salt)) wrongPassword
+            if (hashedAndSalted != passwordHash(user.password, salt)) wrongPassword
             else Redirect(routes.Application.index)
-              .flashing(flashToUser -> s"${person.name} $loggedIn")
-              .withSession(username -> person.name)
+              .flashing(flashToUser -> s"${user.name} $loggedIn")
+              .withSession(username -> user.name)
           }
         }.recover {
           case e =>
@@ -78,7 +78,7 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
   }
 
   def register() = Action.async { implicit request =>
-    personForm.bindFromRequest.fold(
+    registerForm.bindFromRequest.fold(
       errorForm => {
         Future.successful(BadRequest(views.html.register(
           if (errorForm.errors.collectFirst({ case FormError(_, List(UserController.`passwordsNotMatched`), _) => true }).nonEmpty)
@@ -86,16 +86,16 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
           else errorForm
         )))
       },
-      person => {
-        val hash = passwordHash(person.password, Random.nextInt().toString)
-        repo.create(person.name, hash).map { p =>
+      user => {
+        val hash = passwordHash(user.password, Random.nextInt().toString)
+        repo.create(user.name, hash).map { p =>
           Redirect(routes.Application.index)
             .flashing(flashToUser -> userRegistered)
             .withSession(username -> p.name)
         }.recover {
           case e =>
             logger.error(e.getMessage, e)
-            Ok(views.html.register(personForm.bindFromRequest
+            Ok(views.html.register(registerForm.bindFromRequest
               .withError("name", nameRegistered)))
         }
       }
@@ -109,7 +109,7 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
   }
 }
 
-case class CreatePersonForm(name: String, password: String, verify: String)
+case class RegisterUserForm(name: String, password: String, verify: String)
 
 case class LoginForm(name: String, password: String)
 
@@ -125,7 +125,7 @@ object UserController {
   val passwordNotMatchTheName = "Password not match the name"
   val errorDuringPasswordCheck = "Error during password check"
 
-  def validatePassword(f: CreatePersonForm) = f.password.equals(f.verify)
+  def validatePassword(f: RegisterUserForm) = f.password.equals(f.verify)
 
   def passwordHash(password: String, salt: String) = {
     val saltedAndHashed: String = password + "," + salt

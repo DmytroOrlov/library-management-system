@@ -41,9 +41,9 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
     /**
      * This is the tables default "projection".
      *
-     * It defines how the columns are converted to and from the Person object.
+     * It defines how the columns are converted to and from the User object.
      *
-     * In this case, we are simply passing the id, name and page parameters to the Person case classes
+     * In this case, we are simply passing the id, name and page parameters to the User case classes
      * apply and unapply methods.
      */
     def * = (id, name, password) <>((User.apply _).tupled, User.unapply)
@@ -55,20 +55,20 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
   private val users = TableQuery[PeopleTable]
 
   /**
-   * Create a person with the given name and password.
+   * Create a user with the given name and password.
    *
-   * This is an asynchronous operation, it will return a future of the created person, which can be used to obtain the
-   * id for that person.
+   * This is an asynchronous operation, it will return a future of the created user, which can be used to obtain the
+   * id for that user.
    */
   def create(name: String, password: String): Future[User] = db.run {
     // We create a projection of just the name and password columns, since we're not inserting a value for the id column
     (users.map(p => (p.name, p.password))
-      // Now define it to return the id, because we want to know what id was generated for the person
+      // Now define it to return the id, because we want to know what id was generated for the user
       returning users.map(_.id)
       // And we define a transformation for the returned value, which combines our original parameters with the
       // returned id
       into ((namePassword, id) => User(id, namePassword._1, namePassword._2))
-      // And finally, insert the person into the database
+      // And finally, insert the user into the database
       ) +=(name, password)
   }
 
