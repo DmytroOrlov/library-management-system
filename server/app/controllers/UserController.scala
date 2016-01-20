@@ -6,6 +6,7 @@ import com.google.inject.Inject
 import com.typesafe.scalalogging.StrictLogging
 import controllers.UserController._
 import dal.UserRepository
+import models.User
 import play.api.data.Forms._
 import play.api.data.{Form, FormError}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -84,9 +85,9 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
       },
       user => {
         val hash = passwordHash(user.password, Random.nextInt().toString)
-        repo.create(user.name, hash).map { p =>
+        repo.createAndGet(User(user.name, hash)).map { r =>
           Redirect(routes.Application.index)
-            .withSession(username -> p.name)
+            .withSession(username -> user.name)
             .flashing(flashToUser -> userRegistered)
         }.recover {
           case e => logger.warn(e.getMessage, e)

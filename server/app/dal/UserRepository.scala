@@ -60,16 +60,20 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
    * This is an asynchronous operation, it will return a future of the created user, which can be used to obtain the
    * id for that user.
    */
-  def create(name: String, password: String): Future[User] = db.run {
+  def createAndGet(user: User): Future[User] = db.run {
     // We create a projection of just the name and password columns, since we're not inserting a value for the id column
-    (users.map(p => (p.name, p.password))
+    (users
       // Now define it to return the id, because we want to know what id was generated for the user
       returning users.map(_.id)
       // And we define a transformation for the returned value, which combines our original parameters with the
       // returned id
-      into ((namePassword, id) => User(namePassword._1, namePassword._2, Some(id)))
+      into ((user, id) => user.copy(id = Some(id)))
       // And finally, insert the user into the database
-      ) +=(name, password)
+      ) += user
+  }
+
+  def create(user: User): Future[Int] = db.run {
+    users += user
   }
 
   def passwordFor(name: String): Future[Option[String]] = db.run(
