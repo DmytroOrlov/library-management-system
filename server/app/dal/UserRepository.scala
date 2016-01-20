@@ -46,7 +46,7 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
      * In this case, we are simply passing the id, name and page parameters to the User case classes
      * apply and unapply methods.
      */
-    def * = (id, name, password) <>((User.apply _).tupled, User.unapply)
+    def * = (name, password, id.?) <> ((User.apply _).tupled, User.unapply)
   }
 
   /**
@@ -67,7 +67,7 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
       returning users.map(_.id)
       // And we define a transformation for the returned value, which combines our original parameters with the
       // returned id
-      into ((namePassword, id) => User(id, namePassword._1, namePassword._2))
+      into ((namePassword, id) => User(namePassword._1, namePassword._2, Some(id)))
       // And finally, insert the user into the database
       ) +=(name, password)
   }
