@@ -72,9 +72,7 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
       ) += user
   }
 
-  def create(user: User): Future[Int] = db.run {
-    users += user
-  }
+  def create(user: User): Future[Int] = db.run(users += user)
 
   def passwordFor(name: String): Future[Option[String]] = db.run(
     (for (u <- users; if u.name === name) yield u.password).result
@@ -83,7 +81,5 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
   /**
    * List all the users in the database.
    */
-  def list(): Future[Seq[User]] = db.run {
-    users.result
-  }
+  def list(): Future[Seq[User]] = db.run(users.result)
 }
