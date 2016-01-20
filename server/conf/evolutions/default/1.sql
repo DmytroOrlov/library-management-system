@@ -1,11 +1,11 @@
 # --- !Ups
 
-create table "people" (
-  "id" bigserial primary key,
-  "name" varchar not null unique,
-  "password" varchar not null
+CREATE TABLE "users" (
+  "id" BIGSERIAL PRIMARY KEY,
+  "name" VARCHAR NOT NULL UNIQUE,
+  "password" VARCHAR NOT NULL
 );
 
 # --- !Downs
 
-drop table "people" if exists;
+DROP TABLE "users" IF EXISTS;

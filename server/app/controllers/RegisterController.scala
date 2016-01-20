@@ -103,8 +103,8 @@ class RegisterController @Inject()(repo: PersonRepository, val messagesApi: Mess
   }
 
   def all = Action.async {
-    repo.list().map { people =>
-      Ok(Json.toJson(people))
+    repo.list().map { users =>
+      Ok(Json.toJson(users))
     }
   }
 }

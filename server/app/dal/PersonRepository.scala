@@ -9,7 +9,7 @@ import slick.driver.JdbcProfile
 import scala.concurrent.{ExecutionContext, Future}
 
 /**
- * A repository for people.
+ * A repository for users.
  *
  * @param dbConfigProvider The Play db config provider. Play will inject this for you.
  */
@@ -25,9 +25,9 @@ class PersonRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(impli
   import driver.api._
 
   /**
-   * Here we define the table. It will have a name of people
+   * Here we define the table. It will have a name of users
    */
-  private class PeopleTable(tag: Tag) extends Table[Person](tag, "people") {
+  private class PeopleTable(tag: Tag) extends Table[Person](tag, "users") {
 
     /** The ID column, which is the primary key, and auto incremented */
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
@@ -50,9 +50,9 @@ class PersonRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(impli
   }
 
   /**
-   * The starting point for all queries on the people table.
+   * The starting point for all queries on the users table.
    */
-  private val people = TableQuery[PeopleTable]
+  private val users = TableQuery[PeopleTable]
 
   /**
    * Create a person with the given name and password.
@@ -62,9 +62,9 @@ class PersonRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(impli
    */
   def create(name: String, password: String): Future[Person] = db.run {
     // We create a projection of just the name and password columns, since we're not inserting a value for the id column
-    (people.map(p => (p.name, p.password))
+    (users.map(p => (p.name, p.password))
       // Now define it to return the id, because we want to know what id was generated for the person
-      returning people.map(_.id)
+      returning users.map(_.id)
       // And we define a transformation for the returned value, which combines our original parameters with the
       // returned id
       into ((namePassword, id) => Person(id, namePassword._1, namePassword._2))
@@ -73,13 +73,13 @@ class PersonRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(impli
   }
 
   def passwordFor(name: String): Future[Option[String]] = db.run(
-    people.filter(_.name === name).map(_.password).result
+    users.filter(_.name === name).map(_.password).result
   ).map(_.headOption)
 
   /**
-   * List all the people in the database.
+   * List all the users in the database.
    */
   def list(): Future[Seq[Person]] = db.run {
-    people.result
+    users.result
   }
 }
