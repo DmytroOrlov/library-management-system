@@ -89,7 +89,7 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
             .withSession(username -> p.name)
             .flashing(flashToUser -> userRegistered)
         }.recover {
-          case e => logger.error(e.getMessage, e)
+          case e => logger.warn(e.getMessage, e)
             Ok(views.html.register(registerForm.bindFromRequest
               .withError("name", nameRegistered)))
         }
