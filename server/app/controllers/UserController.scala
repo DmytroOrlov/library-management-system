@@ -7,10 +7,12 @@ import com.typesafe.scalalogging.StrictLogging
 import controllers.UserController._
 import dal.UserRepository
 import models.User
+import monifu.concurrent.Scheduler
+import monifu.reactive.Ack.Continue
 import play.api.data.Forms._
 import play.api.data.{Form, FormError}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
+import play.api.libs.iteratee.Concurrent
 import play.api.mvc._
 import sun.misc.BASE64Encoder
 
@@ -103,10 +105,18 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
       errorForm.withError("password", passwordsNotMatched)
     else errorForm
 
-  def all = Action.async {
-    repo.list().map { users =>
-      import models.UserFormat.userFormat
-      Ok(Json.toJson(users))
+  import models.UserFormat._
+
+  implicit val scheduler = Scheduler(ec)
+
+  def all = Action { implicit request =>
+    request.session.get(username).fold(Redirect(routes.UserController.getRegister)) { _ =>
+      Ok.chunked(Concurrent.unicast[User](chan => {
+        repo.list().subscribe(next => {
+          chan.push(next)
+          Continue
+        }, error => chan.end(error), () => chan.end())
+      }).map(userWrites.writes))
     }
   }
 }
