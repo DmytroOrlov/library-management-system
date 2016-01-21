@@ -76,8 +76,8 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
   def create(user: User): Future[Int] = db.run(users += user)
 
   def passwordFor(name: String): Future[Option[String]] = db.run(
-    (for (u <- users; if u.name === name) yield u.password).result
-  ).map(_.headOption)
+    (for (u <- users; if u.name === name) yield u.password).result.headOption
+  )
 
   /**
    * List all the users in the database.
