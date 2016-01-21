@@ -1,5 +1,5 @@
 ---
-# file: web-deploy.yml
+# file: web-prepare.yml
 - hosts: web
   user: ubuntu
   sudo: True
