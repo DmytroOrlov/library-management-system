@@ -87,7 +87,7 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
       },
       user => {
         val hash = passwordHash(user.password, Random.nextInt().toString)
-        repo.createAndGet(User(user.name, hash)).map { r =>
+        repo.create(User(user.name, hash)).map { _ =>
           Redirect(routes.Application.index)
             .withSession(username -> user.name)
             .flashing(flashToUser -> userRegistered)
