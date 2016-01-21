@@ -1,0 +1,7 @@
+---
+# file: web-production.yml
+- hosts: web
+  user: ubuntu
+
+  tasks:
+    - template: src=templates/production.conf dest=~/production.conf

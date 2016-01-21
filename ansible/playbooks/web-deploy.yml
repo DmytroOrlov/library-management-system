@@ -10,7 +10,7 @@
       sudo: yes
     - service: name=server state=stopped
       sudo: yes
-    - command: rm -rf ~/server-0.1-SNAPSHOT
+    - command: rm -rf /home/ubuntu/server-0.1-SNAPSHOT
       sudo: yes
     - unarchive: src=../../server/target/universal/server-0.1-SNAPSHOT.tgz dest=~/
     - service: name=server state=started
