@@ -62,14 +62,8 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
    * id for that user.
    */
   def createAndGet(user: User): Future[User] = db.run {
-    // We create a projection of just the name and password columns, since we're not inserting a value for the id column
-    (users
-      // Now define it to return the id, because we want to know what id was generated for the user
-      returning users.map(_.id)
-      // And we define a transformation for the returned value, which combines our original parameters with the
-      // returned id
-      into ((user, id) => user.copy(id = Some(id)))
-      // And finally, insert the user into the database
+    (users returning users.map(_.id)
+           into ((user, id) => user.copy(id = Some(id)))
       ) += user
   }
 
