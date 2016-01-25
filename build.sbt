@@ -28,7 +28,7 @@ lazy val server = (project in file("server"))
       "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
       "com.typesafe.play" %% "play-slick" % "1.1.1",
       "com.typesafe.play" %% "play-slick-evolutions" % "1.1.1",
-      "org.postgresql" % "postgresql" % "9.4.1207.jre7",
+      "org.postgresql" % "postgresql" % "9.4.1207",
       "com.h2database" % "h2" % "1.4.190"
     )
   ).enablePlugins(PlayScala)
