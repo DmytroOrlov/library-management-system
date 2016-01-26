@@ -8,15 +8,17 @@ import controllers.UserController._
 import dal.UserRepository
 import models.User
 import monifu.concurrent.Scheduler
+import monifu.reactive.Ack
 import monifu.reactive.Ack.Continue
 import play.api.data.Forms._
 import play.api.data.{Form, FormError}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.iteratee.Concurrent
+import play.api.libs.iteratee.ReactiveConcurrent.unicast
+import play.api.libs.iteratee._
 import play.api.mvc._
 import sun.misc.BASE64Encoder
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext, Future, Promise}
 import scala.util.Random
 
 class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport with StrictLogging {
@@ -109,13 +111,31 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
 
   def all = Action { implicit request =>
     request.session.get(username).fold(Redirect(routes.UserController.getRegister)) { _ =>
-      Ok.chunked(Concurrent.unicast[User](chan => {
-        repo.list().subscribe(next => {
-          chan.push(next)
-          Continue
-        }, error => chan.end(error), () => chan.end())
+      Ok.chunked(unicast[User](chan => {
+        repo.list().subscribe(
+          next => { chan.push(next) },
+          error => chan.end(error),
+          () => chan.end()
+        )
       }))
     }
+  }
+}
+
+trait Channel[E] {
+  def push(chunk: Input[E]): Future[Ack]
+
+  def push(item: E): Future[Ack] = {
+    push(Input.El(item))
+  }
+
+  def end(e: Throwable)
+
+  def end()
+
+  def eofAndEnd() {
+    push(Input.EOF)
+    end()
   }
 }
 
