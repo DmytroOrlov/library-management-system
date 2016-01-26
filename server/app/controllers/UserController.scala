@@ -1,6 +1,7 @@
 package controllers
 
 import java.security.MessageDigest
+import java.util.concurrent.atomic.AtomicReference
 
 import com.google.inject.Inject
 import com.typesafe.scalalogging.StrictLogging
@@ -8,12 +9,11 @@ import controllers.UserController._
 import dal.UserRepository
 import models.User
 import monifu.concurrent.Scheduler
-import monifu.reactive.Ack
-import monifu.reactive.Ack.Continue
+import monifu.reactive.Ack.{Cancel, Continue}
+import monifu.reactive.{Ack, Observable}
 import play.api.data.Forms._
 import play.api.data.{Form, FormError}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.iteratee.ReactiveConcurrent.unicast
 import play.api.libs.iteratee._
 import play.api.mvc._
 import sun.misc.BASE64Encoder
@@ -112,12 +112,44 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
   def all = Action { implicit request =>
     request.session.get(username).fold(Redirect(routes.UserController.getRegister)) { _ =>
       Ok.chunked(unicast[User](chan => {
-        repo.list().subscribe(
+        Observable.fromReactivePublisher(repo.list()/*db.stream(users.result)*/).subscribe(
           next => { chan.push(next) },
           error => chan.end(error),
           () => chan.end()
         )
       }))
+    }
+  }
+
+  def unicast[E](onStart: Channel[E] => Unit) = new Enumerator[E] {
+    def apply[A](it: Iteratee[E, A]) = {
+      val kk = new AtomicReference[Option[Input[E] => Iteratee[E, A]]](None)
+      val promise = Promise[Iteratee[E, A]]()
+      it.pureFold {
+        case Step.Cont(k) => kk.set(Some(k))
+        case other => promise.success(other.it)
+      }
+
+      val pushee = new Channel[E] {
+        def end(e: Throwable) = promise.failure(e)
+
+        def end() = kk.get.foreach(k => promise.success(Cont(k)))
+
+        def push(item: Input[E]) = kk.get match {
+          case Some(k) =>
+            val next = k(item)
+            next.pureFold {
+              case Step.Cont(k) =>
+                kk.set(Some(k))
+                Continue
+              case _ =>
+                promise.success(next)
+                Cancel
+            }
+          case _ => Cancel
+        }
+      }
+      Future(onStart(pushee)).flatMap(_ => promise.future)
     }
   }
 }
