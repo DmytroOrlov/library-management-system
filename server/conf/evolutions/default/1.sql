@@ -17,10 +17,10 @@ CREATE TABLE "visitor" (
 );
 
 CREATE TABLE "user" (
-  "id" SERIAL PRIMARY KEY,
-  "name" VARCHAR NOT NULL UNIQUE,
-  "password" VARCHAR NOT NULL,
-  "visitor_id" INTEGER UNIQUE REFERENCES "visitor"("id")
+  "uuid" UUID PRIMARY KEY
+  , "name" VARCHAR NOT NULL
+  , "password" VARCHAR NOT NULL
+  , "visitor_uuid" UUID UNIQUE REFERENCES "visitor"("uuid")
 );
 
 CREATE TABLE "new_visitor" (
