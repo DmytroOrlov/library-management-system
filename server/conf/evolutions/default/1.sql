@@ -1,6 +1,6 @@
 # --- !Ups
 
-CREATE TABLE "users" (
+CREATE TABLE "user" (
   "id" SERIAL PRIMARY KEY,
   "name" VARCHAR NOT NULL UNIQUE,
   "password" VARCHAR NOT NULL
@@ -8,4 +8,4 @@ CREATE TABLE "users" (
 
 # --- !Downs
 
-DROP TABLE "users" IF EXISTS;
+DROP TABLE "user" IF EXISTS;
