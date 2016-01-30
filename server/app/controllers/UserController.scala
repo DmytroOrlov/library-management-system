@@ -88,14 +88,13 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
         Future.successful(BadRequest(views.html.register(withPasswordMatchError(errorForm))))
       },
       form => hashSalt(form.password, Random.nextInt().toString) match {
-        case (hash, salt) => repo.create(User(randomUUID, form.name, s"$hash,$salt")).map { u =>
+        case (hash, salt) => repo.createUniqueName(User(randomUUID, form.name, s"$hash,$salt")).map { u =>
           Redirect(routes.Application.index)
             .withSession(username -> form.name, UserController.uuid -> u.uuid.toString)
             .flashing(flashToUser -> userRegistered)
         }.recover {
-          case e => logger.warn(e.getMessage, e)
-            Ok(views.html.register(registerForm.bindFromRequest
-              .withError("name", nameRegistered)))
+          case _ => BadRequest(views.html.register(registerForm.bindFromRequest
+            .withError("name", nameRegistered)))
         }
       }
     )

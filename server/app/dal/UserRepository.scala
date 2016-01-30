@@ -62,8 +62,10 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, val vis
    */
   private[dal] val users = TableQuery[Users]
 
-  def create(user: User): Future[User] = db.run {
-    users += user
+  def createUniqueName(user: User): Future[User] = db.run {
+    users.filter(_.name === user.name).result.headOption.flatMap {
+      case None => users += user
+    }.transactionally
   }.map(_ => user)
 
   def passwordFor(name: String): Future[Seq[String]] = db.run(
