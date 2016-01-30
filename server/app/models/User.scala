@@ -14,3 +14,5 @@ object User {
 
   implicit def writable(implicit w: Writeable[JsValue]): Writeable[User] = w.map(writes.writes)
 }
+
+case class Library(uuid: UUID, name: String)
