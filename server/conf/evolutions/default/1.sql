@@ -6,9 +6,14 @@ CREATE TABLE "library" (
 );
 
 CREATE TABLE "visitor" (
-  "id" INTEGER NOT NULL,
-  "library_uuid" UUID NOT NULL REFERENCES "library"("uuid"),
-  PRIMARY KEY ("id", "library_uuid")
+  "uuid" UUID PRIMARY KEY
+  , "number" SERIAL
+  , "library_uuid" UUID NOT NULL REFERENCES "library"("uuid")
+  , "first_name" VARCHAR NOT NULL
+  , "last_name" VARCHAR NOT NULL
+  , "middle_name" VARCHAR
+  , "extra_name" VARCHAR
+  , UNIQUE ("number", "library_uuid")
 );
 
 CREATE TABLE "user" (
