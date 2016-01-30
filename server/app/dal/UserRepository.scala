@@ -1,5 +1,6 @@
 package dal
 
+import java.util.UUID
 import javax.inject.{Inject, Singleton}
 
 import models.User
@@ -30,13 +31,15 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
   class Users(tag: Tag) extends Table[User](tag, "user") {
 
     /** The ID column, which is the primary key, and auto incremented */
-    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
+    def uuid = column[UUID]("uuid", O.PrimaryKey)
 
     /** The name column */
     def name = column[String]("name")
 
     /** The password column */
     def password = column[String]("password")
+
+    def visitorUuid = column[UUID]("visitor_uuid")
 
     /**
      * This is the tables default "projection".
@@ -46,7 +49,8 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
      * In this case, we are simply passing the id, name and page parameters to the User case classes
      * apply and unapply methods.
      */
-    def * = (name, password, id.?) <> ((User.apply _).tupled, User.unapply)
+    def * = (uuid, name, password, visitorUuid.?) <>
+      ((User.apply _).tupled, User.unapply)
   }
 
   /**
@@ -54,22 +58,16 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
    */
   private val users = TableQuery[Users]
 
-  /**
-   * Create a user with the given name and password.
-   *
-   * This is an asynchronous operation, it will return a future of the created user, which can be used to obtain the
-   * id for that user.
-   */
-  def createAndGet(user: User): Future[User] = db.run {
-    (users returning users.map(_.id)
-           into ((user, id) => user.copy(id = Some(id)))
-      ) += user
-  }
+  def create(user: User): Future[User] = db.run {
+    users += user
+  }.map(_ => user)
 
-  def create(user: User): Future[Int] = db.run(users += user)
+  def passwordFor(name: String): Future[Seq[String]] = db.run(
+    (for (u <- users if u.name === name) yield u.password).result
+  )
 
-  def passwordFor(name: String): Future[Option[String]] = db.run(
-    (for (u <- users; if u.name === name) yield u.password).result.headOption
+  def usersBy(name: String): Future[Seq[User]] = db.run(
+    users.filter(_.name === name).result
   )
 
   /**

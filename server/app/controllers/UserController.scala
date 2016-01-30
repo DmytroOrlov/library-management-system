@@ -1,6 +1,7 @@
 package controllers
 
 import java.security.MessageDigest
+import java.util.UUID.randomUUID
 import java.util.concurrent.atomic.AtomicReference
 
 import com.google.inject.Inject
@@ -63,15 +64,14 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
       errorForm => {
         Future.successful(BadRequest(views.html.login(errorForm)))
       },
-      user => {
-        repo.passwordFor(user.name).map {
-          _.fold(wrongPassword) { hashedAndSalted =>
-            val salt = hashedAndSalted.split(",")(1)
-            if (hashedAndSalted != passwordHash(user.password, salt)) wrongPassword
-            else Redirect(routes.Application.index)
-              .flashing(flashToUser -> s"$loggedInAs${user.name}")
-              .withSession(username -> user.name)
-          }
+      f => {
+        repo.usersBy(f.name).map { us =>
+          us.map(u => u.uuid -> u.password.split(",")).collectFirst {
+            case (u, Array(hash, salt)) if hash == hashSalt(f.password, salt)._1 =>
+              Redirect(routes.Application.index)
+                .withSession(username -> f.name, UserController.uuid -> u.toString)
+                .flashing(flashToUser -> s"$loggedInAs${f.name}")
+          }.getOrElse(wrongPassword)
         }.recover {
           case e =>
             logger.error(e.getMessage, e)
@@ -87,11 +87,10 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
       errorForm => {
         Future.successful(BadRequest(views.html.register(withPasswordMatchError(errorForm))))
       },
-      user => {
-        val hash = passwordHash(user.password, Random.nextInt().toString)
-        repo.create(User(user.name, hash)).map { _ =>
+      form => hashSalt(form.password, Random.nextInt().toString) match {
+        case (hash, salt) => repo.create(User(randomUUID, form.name, s"$hash,$salt")).map { u =>
           Redirect(routes.Application.index)
-            .withSession(username -> user.name)
+            .withSession(username -> form.name, UserController.uuid -> u.uuid.toString)
             .flashing(flashToUser -> userRegistered)
         }.recover {
           case e => logger.warn(e.getMessage, e)
@@ -177,6 +176,7 @@ case class LoginForm(name: String, password: String)
 
 object UserController {
   val username = "username"
+  val uuid = "uuid"
   val flashToUser = "flashToUser"
 
   val userRegistered = "Thank you for your registration"
@@ -189,12 +189,13 @@ object UserController {
 
   def validatePassword(f: RegisterForm) = f.password.equals(f.verify)
 
-  def passwordHash(password: String, salt: String) = {
-    val saltedAndHashed: String = password + "," + salt
-    val digest: MessageDigest = MessageDigest.getInstance("MD5")
-    digest.update(saltedAndHashed.getBytes)
-    val encoder: BASE64Encoder = new BASE64Encoder
+  val encoder = new BASE64Encoder
+
+  def hashSalt(password: String, salt: String) = {
+    val passwordSalt = password + "," + salt
+    val digest = MessageDigest.getInstance("MD5")
+    digest.update(passwordSalt.getBytes)
     val hashedBytes = new String(digest.digest, "UTF-8").getBytes
-    encoder.encode(hashedBytes) + "," + salt
+    encoder.encode(hashedBytes) -> salt
   }
 }
