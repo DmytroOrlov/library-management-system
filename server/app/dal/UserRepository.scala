@@ -15,7 +15,7 @@ import scala.concurrent.{ExecutionContext, Future}
  * @param dbConfigProvider The Play db config provider. Play will inject this for you.
  */
 @Singleton
-class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
+class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, val visitorRepo: VisitorRepository)(implicit ec: ExecutionContext) {
   // We want the JdbcProfile for this provider
   val dbConfig = dbConfigProvider.get[JdbcProfile]
 
@@ -24,6 +24,8 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
 
   import dbConfig._
   import driver.api._
+
+  import visitorRepo._
 
   /**
    * Here we define the table. It will have a name of users
@@ -51,12 +53,14 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
      */
     def * = (uuid, name, password, visitorUuid.?) <>
       ((User.apply _).tupled, User.unapply)
+
+    def visitor = foreignKey("visitor_fk", visitorUuid, visitors)(_.uuid)
   }
 
   /**
    * The starting point for all queries on the users table.
    */
-  private val users = TableQuery[Users]
+  private[dal] val users = TableQuery[Users]
 
   def create(user: User): Future[User] = db.run {
     users += user

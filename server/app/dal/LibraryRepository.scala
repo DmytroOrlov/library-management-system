@@ -25,7 +25,7 @@ class LibraryRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(impl
       (Library.tupled, Library.unapply)
   }
 
-  private val libraries = TableQuery[Libraries]
+  private[dal] val libraries = TableQuery[Libraries]
 
   def create(library: Library): Future[Library] = db.run {
     libraries += library

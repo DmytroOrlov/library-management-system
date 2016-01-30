@@ -24,7 +24,7 @@ CREATE TABLE "user" (
 );
 
 CREATE TABLE "new_visitor" (
-  "uuid" UUID NOT NULL UNIQUE REFERENCES "user"
+  "uuid" UUID PRIMARY KEY REFERENCES "user"
 );
 
 

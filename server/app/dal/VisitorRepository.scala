@@ -10,11 +10,13 @@ import slick.driver.JdbcProfile
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class VisitorRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
+class VisitorRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, val libRepo: LibraryRepository)(implicit ec: ExecutionContext) {
   val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
   import driver.api._
+
+  import libRepo._
 
   class Visitors(tag: Tag) extends Table[Visitor](tag, "visitor") {
     def uuid = column[UUID]("uuid", O.PrimaryKey)
@@ -33,9 +35,11 @@ class VisitorRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(impl
 
     def * = (uuid, number, libraryUuid, firstName, lastName, middleName.?, extraName.?) <>
       (Visitor.tupled, Visitor.unapply)
+
+    def library = foreignKey("library_fk", libraryUuid, libraries)(_.uuid)
   }
 
-  private val visitors = TableQuery[Visitors]
+  private[dal] val visitors = TableQuery[Visitors]
 
   def create(visitor: Visitor): Future[Visitor] = db.run {
     visitors += visitor
