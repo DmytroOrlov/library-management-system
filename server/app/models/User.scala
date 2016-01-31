@@ -18,3 +18,5 @@ object User {
 case class Library(uuid: UUID, name: String)
 
 case class Visitor(uuid: UUID, number: Int, libraryUuid: UUID, firstName: String, lastName: String, middleName: Option[String], extraName: Option[String])
+
+case class NewVisitor(uuid: UUID, firstName: String, lastName: String, middleName: Option[String], extraName: Option[String])

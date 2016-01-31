@@ -27,6 +27,10 @@ CREATE INDEX "user_name_index" ON "user"("name");
 
 CREATE TABLE "new_visitor" (
   "uuid" UUID PRIMARY KEY REFERENCES "user"
+  , "first_name" VARCHAR NOT NULL
+  , "last_name" VARCHAR NOT NULL
+  , "middle_name" VARCHAR
+  , "extra_name" VARCHAR
 );
 
 
