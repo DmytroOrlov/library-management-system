@@ -5,8 +5,8 @@
 @mainFlashToUser("Login") {
     <h1>Login</h1>
     @form(routes.UserController.postLogin()) {
-        @inputText(user("name"))
-        @inputPassword(user("password"))
+        @inputText(user(UserController.name))
+        @inputPassword(user(UserController.password))
 
         <div class="buttons">
             <input type="submit" value="Login"/>

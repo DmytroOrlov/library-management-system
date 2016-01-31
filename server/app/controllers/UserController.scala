@@ -26,16 +26,16 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
 
   val registerForm: Form[RegisterForm] = Form {
     mapping(
-      "name" -> nonEmptyText,
-      "password" -> nonEmptyText,
-      "verify" -> nonEmptyText
+      name -> nonEmptyText,
+      password -> nonEmptyText,
+      verify -> nonEmptyText
     )(RegisterForm.apply)(RegisterForm.unapply) verifying(passwordsNotMatched, validatePassword _)
   }
 
   val loginForm: Form[LoginForm] = Form {
     mapping(
-      "name" -> nonEmptyText,
-      "password" -> nonEmptyText
+      name -> nonEmptyText,
+      password -> nonEmptyText
     )(LoginForm.apply)(LoginForm.unapply)
   }
 
@@ -56,7 +56,7 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
   def postLogin() = Action.async { implicit request =>
     def wrongPassword = BadRequest(
       views.html.login(loginForm.bindFromRequest
-        .withError("password", messagesApi(passwordNotMatchTheName))
+        .withError(password, messagesApi(passwordNotMatchTheName))
       )
     )
 
@@ -75,7 +75,7 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
           case e =>
             logger.error(e.getMessage, e)
             Ok(views.html.login(loginForm.bindFromRequest
-              .withError("password", messagesApi(errorDuringPasswordCheck))))
+              .withError(password, messagesApi(errorDuringPasswordCheck))))
         }
       }
     )
@@ -92,7 +92,7 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
             .flashing(flashToUser -> messagesApi(youAreRegistered))
         }.recover {
           case _ => BadRequest(views.html.register(registerForm.bindFromRequest
-            .withError("name", messagesApi(nameRegistered))))
+            .withError(name, messagesApi(nameRegistered))))
         }
       }
     )
@@ -103,7 +103,7 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
 
   def withPasswordMatchError(errorForm: Form[RegisterForm]) =
     if (errorForm.errors.collectFirst({ case FormError(_, List(`passwordsNotMatched`), _) => true }).nonEmpty)
-      errorForm.withError("password", messagesApi(passwordsNotMatched))
+      errorForm.withError(password, messagesApi(passwordsNotMatched))
     else errorForm
 
   implicit val scheduler = Scheduler(ec)
@@ -178,6 +178,10 @@ object UserController {
   val username = "username"
   val useruuid = "uuid"
   val flashToUser = "flashToUser"
+
+  val name = "name"
+  val password = "password"
+  val verify = "verify"
 
   val youAreRegistered = "youAreRegistered"
   val youAreLoggedin = "youAreLoggedin"
