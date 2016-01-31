@@ -13,6 +13,7 @@ POST       /register                  controllers.UserController.postRegister
 GET        /register/all              controllers.UserController.all
 
 GET        /newVisitor                controllers.VisitorController.getNewVisitor
+POST       /newVisitor               controllers.VisitorController.postNewVisitor
 
 GET        /streams                   controllers.StreamController.streams
 

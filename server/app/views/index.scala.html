@@ -1,10 +1,10 @@
-@()(implicit flash: Flash, session: Session)
+@()(implicit flash: Flash, session: Session, messages: Messages)
 @mainFlashToUser("Server") {
     <h1>Server content</h1>
     <div><a href="@routes.UserController.all()">All users</a></div>
     <div><a href="@routes.StreamController.streams()">Streams</a></div>
     @session.get(UserController.visitoruuid).fold {
-        <div><a href="@routes.VisitorController.getNewVisitor()">Became New Visitor</a></div>
+        <div><a href="@routes.VisitorController.getNewVisitor()">@messages("newVisitor")</a></div>
     } { _ => }
     <div><a href="@routes.Application.logout()">Logout</a></div>
 }
