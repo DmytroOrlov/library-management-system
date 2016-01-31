@@ -3,7 +3,7 @@
 CREATE TABLE "library" (
   "uuid"           UUID        PRIMARY KEY
   , "name"         VARCHAR     NOT NULL    UNIQUE
-  , "created"      TIMESTAMPTZ NOT NULL           DEFAULT CURRENT_TIMESTAMP
+  , "created"      TIMESTAMP   NOT NULL           DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE "visitor" (
@@ -14,7 +14,7 @@ CREATE TABLE "visitor" (
   , "last_name"    VARCHAR     NOT NULL
   , "middle_name"  VARCHAR
   , "extra_name"   VARCHAR
-  , "created"      TIMESTAMPTZ NOT NULL    DEFAULT CURRENT_TIMESTAMP
+  , "created"      TIMESTAMP   NOT NULL    DEFAULT CURRENT_TIMESTAMP
   , UNIQUE ("number", "library_uuid")
 );
 
@@ -23,7 +23,7 @@ CREATE TABLE "user" (
   , "name"         VARCHAR     NOT NULL
   , "password"     VARCHAR     NOT NULL
   , "visitor_uuid" UUID                    UNIQUE REFERENCES "visitor"("uuid")
-  , "created"      TIMESTAMPTZ NOT NULL           DEFAULT CURRENT_TIMESTAMP
+  , "created"      TIMESTAMP   NOT NULL           DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX "user_name_index" ON "user"("name");
@@ -34,7 +34,7 @@ CREATE TABLE "new_visitor" (
   , "last_name"    VARCHAR     NOT NULL
   , "middle_name"  VARCHAR
   , "extra_name"   VARCHAR
-  , "created"      TIMESTAMPTZ NOT NULL    DEFAULT CURRENT_TIMESTAMP
+  , "created"      TIMESTAMP   NOT NULL    DEFAULT CURRENT_TIMESTAMP
 );
 
 
