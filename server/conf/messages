@@ -8,3 +8,4 @@ passwordsNotMatched = Passwords not matched
 passwordNotMatchTheName = Password not match the name
 errorDuringPasswordCheck = Error during password check
 logoutDone = Logout done
+Register = Register

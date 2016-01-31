@@ -2,16 +2,16 @@
 
 @import helper._
 
-@mainFlashToUser("Register") {
-    <h1>Register</h1>
+@mainFlashToUser(messages("Register")) {
+    <h1>@messages("Register")</h1>
+    <a href="@routes.UserController.getLogin()">Login</a>
     @form(routes.UserController.postRegister()) {
         @inputText(user("name"))
         @inputPassword(user("password"))
         @inputPassword(user("verify"))
 
         <div class="buttons">
-            <input type="submit" value="Register"/>
+            <input type="submit" value="@messages("Register")"/>
         </div>
-        <div><a href="@routes.UserController.getLogin()">Login</a></div>
     }
 }
