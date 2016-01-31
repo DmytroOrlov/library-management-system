@@ -12,6 +12,8 @@ GET        /register                  controllers.UserController.getRegister
 POST       /register                  controllers.UserController.postRegister
 GET        /register/all              controllers.UserController.all
 
+GET        /newVisitor                controllers.VisitorController.getNewVisitor
+
 GET        /streams                   controllers.StreamController.streams
 
 GET        /back-pressured-stream     controllers.StreamController.backPressuredStream(periodMillis: Int, seed: Long)

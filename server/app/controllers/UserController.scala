@@ -98,8 +98,12 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
     )
   }
 
-  def redirectWithSession(u: User) = Redirect(routes.Application.index)
-    .withSession(useruuid -> u.uuid.toString)
+  def redirectWithSession(u: User)(implicit request: Request[AnyContent]) = {
+    val res = Redirect(routes.Application.index).withSession(useruuid -> u.uuid.toString)
+    u.visitorUuid.fold(res) { u =>
+      res.addingToSession(visitoruuid -> u.toString)
+    }
+  }
 
   def withPasswordMatchError(errorForm: Form[RegisterForm]) =
     if (errorForm.errors.collectFirst({ case FormError(_, List(`passwordsNotMatched`), _) => true }).nonEmpty)
@@ -177,6 +181,7 @@ case class LoginForm(name: String, password: String)
 object UserController {
   val username = "username"
   val useruuid = "uuid"
+  val visitoruuid = "visitoruuid"
   val flashToUser = "flashToUser"
 
   val name = "name"
