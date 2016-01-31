@@ -14,7 +14,7 @@ import monifu.reactive.Ack.{Cancel, Continue}
 import monifu.reactive.{Ack, Observable}
 import play.api.data.Forms._
 import play.api.data.{Form, FormError}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{Messages, I18nSupport, MessagesApi}
 import play.api.libs.iteratee._
 import play.api.mvc._
 import sun.misc.BASE64Encoder
@@ -42,21 +42,21 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
   def getLogin = Action { implicit request =>
     request.session.get(useruuid).fold(Ok(views.html.login(loginForm))) { _ =>
       Redirect(routes.Application.index)
-        .flashing(flashToUser -> messagesApi(youAreLoggedin))
+        .flashing(flashToUser -> Messages(youAreLoggedin))
     }
   }
 
   def getRegister = Action { implicit request =>
     request.session.get(useruuid).fold(Ok(views.html.register(registerForm))) { _ =>
       Redirect(routes.Application.index)
-        .flashing(flashToUser -> messagesApi(youAreRegistered))
+        .flashing(flashToUser -> Messages(youAreRegistered))
     }
   }
 
   def postLogin() = Action.async { implicit request =>
     def wrongPassword = BadRequest(
       views.html.login(loginForm.bindFromRequest
-        .withError(password, messagesApi(passwordNotMatchTheName))
+        .withError(password, Messages(passwordNotMatchTheName))
       )
     )
 
@@ -69,12 +69,12 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
           us.map(u => u -> u.password.split(",")).collectFirst {
             case (user, Array(hash, salt)) if hash == hashSalt(f.password, salt)._1 =>
               redirectWithSession(user)
-                .flashing(flashToUser -> messagesApi(youAreLoggedin))
+                .flashing(flashToUser -> Messages(youAreLoggedin))
           }.getOrElse(wrongPassword)
         }.recover {
           case e => logger.error(e.getMessage, e)
             Ok(views.html.login(loginForm.bindFromRequest
-              .withError(password, messagesApi(errorDuringPasswordCheck))))
+              .withError(password, Messages(errorDuringPasswordCheck))))
         }
       }
     )
@@ -88,11 +88,11 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
       form => hashSalt(form.password, Random.nextInt().toString) match {
         case (hash, salt) => repo.createUniqueName(User(randomUUID, form.name, s"$hash,$salt")).map { user =>
           redirectWithSession(user)
-            .flashing(flashToUser -> messagesApi(youAreRegistered))
+            .flashing(flashToUser -> Messages(youAreRegistered))
         }.recover {
           case e => logger.error(e.getMessage, e)
             BadRequest(views.html.register(registerForm.bindFromRequest
-              .withError(name, messagesApi(nameRegistered))))
+              .withError(name, Messages(nameRegistered))))
         }
       }
     )
@@ -107,7 +107,7 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
 
   def withPasswordMatchError(errorForm: Form[RegisterForm]) =
     if (errorForm.errors.collectFirst({ case FormError(_, List(`passwordsNotMatched`), _) => true }).nonEmpty)
-      errorForm.withError(password, messagesApi(passwordsNotMatched))
+      errorForm.withError(password, Messages(passwordsNotMatched))
     else errorForm
 
   implicit val scheduler = Scheduler(ec)

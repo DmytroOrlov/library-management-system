@@ -10,7 +10,7 @@ import dal.NewVisitorRepository
 import models.NewVisitor
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{Messages, I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,11 +39,11 @@ class VisitorController @Inject()(repo: NewVisitorRepository, val messagesApi: M
       f => request.session.get(useruuid).fold(Future.successful(Redirect(routes.Application.index))) { id =>
         repo.create(NewVisitor(UUID.fromString(id), f.firstName, f.lastName, Some(f.middleName), Some(f.extraName))).map { _ =>
           Redirect(routes.Application.index)
-            .flashing(flashToUser -> messagesApi(newVisitorApplied))
+            .flashing(flashToUser -> Messages(newVisitorApplied))
         }.recover {
           case e => logger.error(e.getMessage, e)
             BadRequest(views.html.newVisitor(newVisitorForm.bindFromRequest
-              .withError(firstName, messagesApi(cantCreateNewVisitor))))
+              .withError(firstName, Messages(cantCreateNewVisitor))))
         }
       }
     )
