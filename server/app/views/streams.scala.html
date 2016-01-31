@@ -5,6 +5,7 @@
             <img src="@routes.Assets.versioned("images/monifu-text.png")" />
         </a>
     </h1>
+    <a href="@routes.Application.index()">@msg("home")</a>
     <div id="lineChart" class="epoch category10"></div>
     <a href="https://github.com/monifu/monifu-sample" id="toSource">@msg("viewSource")</a>
     @playscalajs.html.scripts("client")

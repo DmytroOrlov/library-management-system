@@ -4,7 +4,7 @@
 @(user: Form[RegisterForm])(implicit msg: Messages, flash: Flash)
     @main(msg("register")) {
         <h1>@msg("register")</h1>
-        <a href="@routes.UserController.getLogin()">Login</a>
+        <a href="@routes.UserController.getLogin()">@msg("login")</a>
         <div class="userFrom">
         @form(routes.UserController.postRegister()) {
             @inputText(user(name))
