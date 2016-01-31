@@ -24,7 +24,6 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, val vis
 
   import dbConfig._
   import driver.api._
-
   import visitorRepo._
 
   /**
@@ -63,18 +62,20 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, val vis
   private[dal] val users = TableQuery[Users]
 
   def createUniqueName(user: User): Future[User] = db.run {
-    users.filter(_.name === user.name).result.headOption.flatMap {
+    filterBy(user.name).result.headOption.flatMap {
       case None => users += user
     }.transactionally
   }.map(_ => user)
 
   def passwordFor(name: String): Future[Seq[String]] = db.run(
-    (for (u <- users if u.name === name) yield u.password).result
+    filterBy(name).map(_.password).result
   )
 
   def usersBy(name: String): Future[Seq[User]] = db.run(
-    users.filter(_.name === name).result
+    filterBy(name).result
   )
+
+  private def filterBy(name: String) = users.filter(_.name === name)
 
   /**
    * List all the users in the database.

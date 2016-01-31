@@ -23,6 +23,8 @@ CREATE TABLE "user" (
   , "visitor_uuid" UUID UNIQUE REFERENCES "visitor"("uuid")
 );
 
+CREATE INDEX "user_name_index" ON "user"("name");
+
 CREATE TABLE "new_visitor" (
   "uuid" UUID PRIMARY KEY REFERENCES "user"
 );
