@@ -1,14 +1,17 @@
 package controllers
 
+import com.google.inject.Inject
 import controllers.UserController._
+import engine.{BackPressuredWebSocketActor, DataProducer, SimpleWebSocketActor}
 import monifu.concurrent.Implicits.globalScheduler
-import engine.{SimpleWebSocketActor, BackPressuredWebSocketActor, DataProducer}
+import play.api.Play.current
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
 import play.api.mvc._
-import play.api.Play.current
-import concurrent.duration._
 
-class StreamController extends Controller with JSONFormats {
+import scala.concurrent.duration._
+
+class StreamController @Inject()(val messagesApi: MessagesApi) extends Controller with I18nSupport with JSONFormats {
   def streams = Action { implicit request =>
     request.session.get(useruuid).fold(Redirect(routes.UserController.getRegister)) { _ =>
       Ok(views.html.streams())

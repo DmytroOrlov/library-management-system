@@ -1,10 +1,12 @@
-@()(implicit flash: Flash, session: Session, messages: Messages)
-@mainFlashToUser("Server") {
-    <h1>Server content</h1>
-    <div><a href="@routes.UserController.all()">All users</a></div>
-    <div><a href="@routes.StreamController.streams()">Streams</a></div>
-    @session.get(UserController.visitoruuid).fold {
-        <div><a href="@routes.VisitorController.getNewVisitor()">@messages("newVisitor")</a></div>
+@import controllers.UserController._
+
+@()(implicit flash: Flash, session: Session, msg: Messages)
+@main(msg("home")) {
+    <h1>@msg("libraryManagementSystem") - @msg("home")</h1>
+    <div><a href="@routes.UserController.all()">@msg("allUsers")</a></div>
+    <div><a href="@routes.StreamController.streams()">@msg("streams")</a></div>
+    @session.get(visitoruuid).fold {
+        <div><a href="@routes.VisitorController.getNewVisitor()">@msg("newVisitor")</a></div>
     } { _ => }
-    <div><a href="@routes.Application.logout()">Logout</a></div>
+    <div><a href="@routes.Application.logout()">@msg("logout")</a></div>
 }

@@ -1,18 +1,17 @@
-@(user: Form[NewVisitorForm])(implicit messages: Messages, flash: Flash)
-
-@import helper._
 @import VisitorController._
+@import helper._
 
-@mainFlashToUser(messages("newVisitor")) {
-    <h1>@messages("newVisitor")</h1>
-    <a href="@routes.Application.index()">@messages("Home")</a>
+@(user: Form[NewVisitorForm])(implicit msg: Messages, flash: Flash)
+@main(msg("newVisitor")) {
+    <h1>@msg("newVisitor")</h1>
+    <a href="@routes.Application.index()">@msg("home")</a>
     @form(routes.VisitorController.postNewVisitor()) {
         @inputText(user(firstName))
         @inputText(user(lastName))
         @inputText(user(middleName))
         @inputText(user(extraName))
         <div class="buttons">
-            <input type="submit" value="@messages("newVisitor")"/>
+            <input type="submit" value="@msg("newVisitor")"/>
         </div>
     }
 }
