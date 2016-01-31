@@ -1,8 +1,8 @@
-@import controllers.UserController._
+@import UserController._
 
 @()(implicit flash: Flash, session: Session, msg: Messages)
 @main(msg("home")) {
-    <h1>@msg("libraryManagementSystem") - @msg("home")</h1>
+    <h1>@msg("libraryManagementSystem")</h1>
     <div><a href="@routes.UserController.all()">@msg("allUsers")</a></div>
     <div><a href="@routes.StreamController.streams()">@msg("streams")</a></div>
     @session.get(visitoruuid).fold {

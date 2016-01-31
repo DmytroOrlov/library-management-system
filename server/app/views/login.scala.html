@@ -1,17 +1,17 @@
-@import controllers.UserController._
+@import UserController._
 @import helper._
 
 @(user: Form[LoginForm])(implicit msg: Messages, flash: Flash)
-    @main(msg("login")) {
-        <h1>@msg("login")</h1>
-        <div><a href="@routes.UserController.getRegister()">@msg("register")</a></div>
-        <div class="userFrom">
-        @form(routes.UserController.postLogin()) {
-            @inputText(user(name))
-            @inputPassword(user(password))
-            <div class="buttons">
-                <input type="submit" value="@msg("login")"/>
-            </div>
-        }
+@main(msg("login")) {
+    <h1>@msg("login")</h1>
+    <div><a href="@routes.UserController.getRegister()">@msg("register")</a></div>
+    <div class="userFrom">
+    @form(routes.UserController.postLogin()) {
+        @inputText(user(name))
+        @inputPassword(user(password))
+        <div class="buttons">
+            <input type="submit" value="@msg("login")"/>
         </div>
     }
+    </div>
+}
