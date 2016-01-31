@@ -25,7 +25,7 @@ lazy val server = (project in file("server"))
       "org.webjars.bower" % "epoch" % "0.6.0",
       "org.webjars" % "d3js" % "3.5.12",
       "org.monifu" %% "monifu" % "1.0",
-      "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
+      "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0", // todo remove
       "com.typesafe.play" %% "play-slick" % "1.1.1",
       "com.typesafe.play" %% "play-slick-evolutions" % "1.1.1",
       "org.postgresql" % "postgresql" % "9.4.1207",
