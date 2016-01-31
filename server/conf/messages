@@ -1,3 +1,10 @@
 name = Name
 password = Password
 verify = Verify
+youAreRegistered = You are registered
+youAreLoggedin = You are logged in
+nameRegistered = Name already registered, Please choose another
+passwordsNotMatched = Passwords not matched
+passwordNotMatchTheName = Password not match the name
+errorDuringPasswordCheck = Error during password check
+logoutDone = Logout done

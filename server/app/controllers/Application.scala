@@ -1,10 +1,12 @@
 package controllers
 
+import com.google.inject.Inject
 import controllers.Application._
 import controllers.UserController._
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 
-class Application extends Controller {
+class Application @Inject()(val messagesApi: MessagesApi) extends Controller with I18nSupport {
   def index = Action { implicit request =>
     request.session.get(useruuid).fold(Redirect(routes.UserController.getRegister)) { _ =>
       Ok(views.html.index())
@@ -15,11 +17,11 @@ class Application extends Controller {
     request.session.get(useruuid).fold(Redirect(routes.UserController.getRegister).withNewSession) { _ =>
       Redirect(routes.UserController.getLogin)
         .withNewSession
-        .flashing(flashToUser -> logoutDone)
+        .flashing(flashToUser -> messagesApi(logoutDone))
     }
   }
 }
 
 object Application {
-  val logoutDone = "Logout done"
+  val logoutDone = "logoutDone"
 }
