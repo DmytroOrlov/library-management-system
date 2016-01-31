@@ -14,7 +14,7 @@ import monifu.reactive.Ack.{Cancel, Continue}
 import monifu.reactive.{Ack, Observable}
 import play.api.data.Forms._
 import play.api.data.{Form, FormError}
-import play.api.i18n.{Messages, I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.iteratee._
 import play.api.mvc._
 import sun.misc.BASE64Encoder

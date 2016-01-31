@@ -10,7 +10,7 @@ import dal.NewVisitorRepository
 import models.NewVisitor
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.{Messages, I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, Controller}
 
 import scala.concurrent.{ExecutionContext, Future}
