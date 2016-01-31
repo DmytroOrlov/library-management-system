@@ -1,37 +1,40 @@
 # --- !Ups
 
 CREATE TABLE "library" (
-  "uuid"   UUID    PRIMARY KEY
-  , "name" VARCHAR NOT NULL    UNIQUE
+  "uuid"           UUID        PRIMARY KEY
+  , "name"         VARCHAR     NOT NULL    UNIQUE
+  , "created"      TIMESTAMPTZ NOT NULL           DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE "visitor" (
-  "uuid"           UUID    PRIMARY KEY
+  "uuid"           UUID        PRIMARY KEY
   , "number"       SERIAL
-  , "library_uuid" UUID    NOT NULL    REFERENCES "library"("uuid")
-  , "first_name"   VARCHAR NOT NULL
-  , "last_name"    VARCHAR NOT NULL
+  , "library_uuid" UUID        NOT NULL    REFERENCES "library"("uuid")
+  , "first_name"   VARCHAR     NOT NULL
+  , "last_name"    VARCHAR     NOT NULL
   , "middle_name"  VARCHAR
   , "extra_name"   VARCHAR
+  , "created"      TIMESTAMPTZ NOT NULL    DEFAULT CURRENT_TIMESTAMP
   , UNIQUE ("number", "library_uuid")
 );
 
 CREATE TABLE "user" (
-  "uuid"           UUID    PRIMARY KEY
-  , "name"         VARCHAR NOT NULL
-  , "password"     VARCHAR NOT NULL
-  , "visitor_uuid" UUID                UNIQUE REFERENCES "visitor"("uuid")
+  "uuid"           UUID        PRIMARY KEY
+  , "name"         VARCHAR     NOT NULL
+  , "password"     VARCHAR     NOT NULL
+  , "visitor_uuid" UUID                    UNIQUE REFERENCES "visitor"("uuid")
+  , "created"      TIMESTAMPTZ NOT NULL           DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX "user_name_index" ON "user"("name");
 
 CREATE TABLE "new_visitor" (
-  "uuid"          UUID      PRIMARY KEY REFERENCES "user"
-  , "first_name"  VARCHAR   NOT NULL
-  , "last_name"   VARCHAR   NOT NULL
-  , "middle_name" VARCHAR
-  , "extra_name"  VARCHAR
-  , "created"     TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+  "uuid"           UUID        PRIMARY KEY REFERENCES "user"
+  , "first_name"   VARCHAR     NOT NULL
+  , "last_name"    VARCHAR     NOT NULL
+  , "middle_name"  VARCHAR
+  , "extra_name"   VARCHAR
+  , "created"      TIMESTAMPTZ NOT NULL    DEFAULT CURRENT_TIMESTAMP
 );
 
 
