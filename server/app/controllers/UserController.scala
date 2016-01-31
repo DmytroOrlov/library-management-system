@@ -40,16 +40,16 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
   }
 
   def getLogin = Action { implicit request =>
-    request.session.get(username).fold(Ok(views.html.login(loginForm))) { name =>
+    request.session.get(useruuid).fold(Ok(views.html.login(loginForm))) { _ =>
       Redirect(routes.Application.index)
-        .flashing(flashToUser -> s"$loggedInAs$name")
+        .flashing(flashToUser -> youAreLoggedin)
     }
   }
 
   def getRegister = Action { implicit request =>
-    request.session.get(username).fold(Ok(views.html.register(registerForm))) { _ =>
+    request.session.get(useruuid).fold(Ok(views.html.register(registerForm))) { _ =>
       Redirect(routes.Application.index)
-        .flashing(flashToUser -> alreadyRegistered)
+        .flashing(flashToUser -> youAreRegistered)
     }
   }
 
@@ -66,11 +66,10 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
       },
       f => {
         repo.usersBy(f.name).map { us =>
-          us.map(u => u.uuid -> u.password.split(",")).collectFirst {
-            case (u, Array(hash, salt)) if hash == hashSalt(f.password, salt)._1 =>
-              Redirect(routes.Application.index)
-                .withSession(username -> f.name, UserController.uuid -> u.toString)
-                .flashing(flashToUser -> s"$loggedInAs${f.name}")
+          us.map(u => u -> u.password.split(",")).collectFirst {
+            case (user, Array(hash, salt)) if hash == hashSalt(f.password, salt)._1 =>
+              redirectWithSession(user)
+                .flashing(flashToUser -> youAreLoggedin)
           }.getOrElse(wrongPassword)
         }.recover {
           case e =>
@@ -88,10 +87,9 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
         Future.successful(BadRequest(views.html.register(withPasswordMatchError(errorForm))))
       },
       form => hashSalt(form.password, Random.nextInt().toString) match {
-        case (hash, salt) => repo.createUniqueName(User(randomUUID, form.name, s"$hash,$salt")).map { u =>
-          Redirect(routes.Application.index)
-            .withSession(username -> form.name, UserController.uuid -> u.uuid.toString)
-            .flashing(flashToUser -> userRegistered)
+        case (hash, salt) => repo.createUniqueName(User(randomUUID, form.name, s"$hash,$salt")).map { user =>
+          redirectWithSession(user)
+            .flashing(flashToUser -> youAreRegistered)
         }.recover {
           case _ => BadRequest(views.html.register(registerForm.bindFromRequest
             .withError("name", nameRegistered)))
@@ -99,6 +97,9 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
       }
     )
   }
+
+  def redirectWithSession(u: User) = Redirect(routes.Application.index)
+    .withSession(useruuid -> u.uuid.toString)
 
   def withPasswordMatchError(errorForm: Form[RegisterForm]) =
     if (errorForm.errors.collectFirst({ case FormError(_, List(`passwordsNotMatched`), _) => true }).nonEmpty)
@@ -108,7 +109,7 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
   implicit val scheduler = Scheduler(ec)
 
   def all = Action { implicit request =>
-    request.session.get(username).fold(Redirect(routes.UserController.getRegister)) { _ =>
+    request.session.get(useruuid).fold(Redirect(routes.UserController.getRegister)) { _ =>
       Ok.chunked(unicast[User](chan => {
         Observable.fromReactivePublisher(repo.list()/*db.stream(users.result)*/).subscribe(
           next => { chan.push(next) },
@@ -175,12 +176,11 @@ case class LoginForm(name: String, password: String)
 
 object UserController {
   val username = "username"
-  val uuid = "uuid"
+  val useruuid = "uuid"
   val flashToUser = "flashToUser"
 
-  val userRegistered = "Thank you for your registration"
-  val alreadyRegistered = "You are already registered"
-  val loggedInAs = "Logged in as "
+  val youAreRegistered = "You are registered"
+  val youAreLoggedin = "You are logged in"
   val nameRegistered = "Name already registered, Please choose another"
   val passwordsNotMatched = "Passwords not matched"
   val passwordNotMatchTheName = "Password not match the name"
