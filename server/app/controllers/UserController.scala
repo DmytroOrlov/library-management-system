@@ -72,8 +72,7 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
                 .flashing(flashToUser -> messagesApi(youAreLoggedin))
           }.getOrElse(wrongPassword)
         }.recover {
-          case e =>
-            logger.error(e.getMessage, e)
+          case e => logger.error(e.getMessage, e)
             Ok(views.html.login(loginForm.bindFromRequest
               .withError(password, messagesApi(errorDuringPasswordCheck))))
         }
@@ -91,8 +90,9 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
           redirectWithSession(user)
             .flashing(flashToUser -> messagesApi(youAreRegistered))
         }.recover {
-          case _ => BadRequest(views.html.register(registerForm.bindFromRequest
-            .withError(name, messagesApi(nameRegistered))))
+          case e => logger.error(e.getMessage, e)
+            BadRequest(views.html.register(registerForm.bindFromRequest
+              .withError(name, messagesApi(nameRegistered))))
         }
       }
     )
