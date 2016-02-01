@@ -66,8 +66,8 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
       },
       f => {
         repo.usersBy(f.name).map { us =>
-          us.map(u => u -> u.password.split(",")).collectFirst {
-            case (user, Array(hash, salt)) if hash == hashSalt(f.password, salt)._1 =>
+          us.map(u => u -> span(u.password)).collectFirst {
+            case (user, (hash, salt)) if hash == toHashSalt(f.password, salt)._1 =>
               redirectWithSession(user)
                 .flashing(flashToUser -> Messages(youAreLoggedin))
           }.getOrElse(wrongPassword)
@@ -85,8 +85,8 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
       errorForm => {
         Future.successful(BadRequest(views.html.register(withPasswordMatchError(errorForm))))
       },
-      form => hashSalt(form.password, Random.nextInt().toString) match {
-        case (hash, salt) => repo.createUniqueName(User(randomUUID, form.name, s"$hash,$salt")).map { user =>
+      form => toHashSalt(form.password, Random.nextInt().toString) match {
+        case (hash, salt) => repo.createUniqueName(User(randomUUID, form.name, combine(hash, salt))).map { user =>
           redirectWithSession(user)
             .flashing(flashToUser -> Messages(youAreRegistered))
         }.recover {
@@ -199,11 +199,17 @@ object UserController {
 
   val encoder = new BASE64Encoder
 
-  def hashSalt(password: String, salt: String) = {
-    val passwordSalt = password + "," + salt
+  def toHashSalt(password: String, salt: String) = {
+    val withSalt = combine(password, salt)
     val digest = MessageDigest.getInstance("MD5")
-    digest.update(passwordSalt.getBytes)
+    digest.update(withSalt.getBytes)
     val hashedBytes = new String(digest.digest, "UTF-8").getBytes
     encoder.encode(hashedBytes) -> salt
+  }
+
+  def combine(password: String, salt: String) = password + "," + salt
+
+  def span(hashSalt: String): (String, String) = hashSalt.span(_ != ',') match {
+    case (p, s) => p -> s.tail
   }
 }
