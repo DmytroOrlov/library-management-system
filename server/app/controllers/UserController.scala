@@ -5,13 +5,13 @@ import java.util.UUID.randomUUID
 import java.util.concurrent.atomic.AtomicReference
 
 import com.google.inject.Inject
-import com.typesafe.scalalogging.StrictLogging
 import controllers.UserController._
 import dal.UserRepository
 import models.User
 import monifu.concurrent.Scheduler
 import monifu.reactive.Ack.{Cancel, Continue}
 import monifu.reactive.{Ack, Observable}
+import play.api.Logger
 import play.api.data.Forms._
 import play.api.data.{Form, FormError}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -22,7 +22,7 @@ import sun.misc.BASE64Encoder
 import scala.concurrent.{ExecutionContext, Future, Promise}
 import scala.util.Random
 
-class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport with StrictLogging {
+class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
   val registerForm: Form[RegisterForm] = Form {
     mapping(
@@ -72,7 +72,7 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
                 .flashing(flashToUser -> Messages(youAreLoggedin))
           }.getOrElse(wrongPassword)
         }.recover {
-          case e => logger.error(e.getMessage, e)
+          case e => Logger.error(e.getMessage, e)
             Ok(views.html.login(loginForm.bindFromRequest
               .withError(password, Messages(errorDuringPasswordCheck))))
         }
@@ -90,7 +90,7 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
           redirectWithSession(user)
             .flashing(flashToUser -> Messages(youAreRegistered))
         }.recover {
-          case e => logger.error(e.getMessage, e)
+          case e => Logger.error(e.getMessage, e)
             BadRequest(views.html.register(registerForm.bindFromRequest
               .withError(name, Messages(nameRegistered))))
         }

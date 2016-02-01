@@ -3,11 +3,11 @@ package controllers
 import java.util.UUID
 
 import com.google.inject.Inject
-import com.typesafe.scalalogging.StrictLogging
 import controllers.UserController._
 import controllers.VisitorController._
 import dal.NewVisitorRepository
 import models.NewVisitor
+import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -15,7 +15,7 @@ import play.api.mvc.{Action, Controller}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class VisitorController @Inject()(repo: NewVisitorRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport with StrictLogging {
+class VisitorController @Inject()(repo: NewVisitorRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
   val newVisitorForm: Form[NewVisitorForm] = Form {
     mapping(
       firstName -> nonEmptyText,
@@ -41,7 +41,7 @@ class VisitorController @Inject()(repo: NewVisitorRepository, val messagesApi: M
           Redirect(routes.Application.index)
             .flashing(flashToUser -> Messages(newVisitorApplied))
         }.recover {
-          case e => logger.error(e.getMessage, e)
+          case e => Logger.error(e.getMessage, e)
             BadRequest(views.html.newVisitor(newVisitorForm.bindFromRequest
               .withError(firstName, Messages(cantCreateNewVisitor))))
         }

@@ -1,21 +1,21 @@
 package engine
 
 import akka.actor.{Actor, ActorRef, Props}
-import com.typesafe.scalalogging.LazyLogging
 import engine.BackPressuredWebSocketActor._
 import monifu.concurrent.Scheduler
 import monifu.reactive.Observable
 import monifu.reactive.OverflowStrategy.DropOld
 import monifu.reactive.streams.SingleAssignmentSubscription
 import org.reactivestreams.{Subscriber, Subscription}
-import play.api.libs.json.{Writes, JsObject, JsValue, Json}
+import play.api.Logger
+import play.api.libs.json.{JsObject, JsValue, Json, Writes}
 import shared.models.Event
-import scala.concurrent.duration._
 
+import scala.concurrent.duration._
 
 class BackPressuredWebSocketActor[T <: Event : Writes]
   (producer: Observable[T], out: ActorRef)(implicit s: Scheduler)
-  extends Actor with LazyLogging {
+  extends Actor {
 
   def receive: Receive = {
     case Request(nr) =>
@@ -50,7 +50,7 @@ class BackPressuredWebSocketActor[T <: Event : Writes]
       }
 
       def onError(t: Throwable): Unit = {
-        logger.warn(s"Error while serving a web-socket stream", t)
+        Logger.warn(s"Error while serving a web-socket stream", t)
         out ! Json.obj(
           "event" -> "error",
           "type" -> t.getClass.getName,
