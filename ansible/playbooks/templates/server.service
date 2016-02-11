@@ -5,7 +5,7 @@ After=syslog.target network.target
 [Service]
 Type=simple
 # This points to the shell script that activator created for you
-ExecStart=/home/ubuntu/server-0.1-SNAPSHOT/bin/server -Dconfig.file=/home/ubuntu/production.conf
+ExecStart=/home/ubuntu/library-management-system-1.0-SNAPSHOT/bin/library-management-system -Dconfig.file=/home/ubuntu/production.conf
 
 [Install]
 WantedBy=multi-user.target

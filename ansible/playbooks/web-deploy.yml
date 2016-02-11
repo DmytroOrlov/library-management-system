@@ -5,15 +5,15 @@
 
   tasks:
     - template: src=templates/server.service dest=/etc/systemd/system/server.service
-      sudo: yes
+      become: yes
     - command: systemctl daemon-reload
-      sudo: yes
+      become: yes
     - service: name=server state=stopped
-      sudo: yes
-    - command: rm -rf /home/ubuntu/server-0.1-SNAPSHOT
-      sudo: yes
-    - unarchive: src=../../server/target/universal/server-0.1-SNAPSHOT.tgz dest=~/
+      become: yes
+    - file: path='/home/ubuntu/library-management-system-1.0-SNAPSHOT' state=absent
+      become: yes
+    - unarchive: src=../../server/target/universal/library-management-system-1.0-SNAPSHOT.tgz dest=~/
     - service: name=server state=started
-      sudo: yes
+      become: yes
     - command: systemctl enable server
-      sudo: yes
+      become: yes
