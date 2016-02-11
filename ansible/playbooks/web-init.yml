@@ -1,12 +1,12 @@
 ---
-# file: web-prepare.yml
+# file: web-init.yml
 - hosts: web
   user: ubuntu
-  sudo: True
+  become: True
 
   tasks:
     - apt_repository: repo='ppa:webupd8team/java'
     - shell: echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
     - apt: pkg=oracle-java8-installer state=latest update_cache=yes
-    - command: rm -rf /var/lib/apt/lists/*
-    - command: rm -rf /var/cache/oracle-jdk8-installer
+    - file: path='/var/lib/apt/lists/*' state=absent
+    - file: path='/var/cache/oracle-jdk8-installer' state=absent
