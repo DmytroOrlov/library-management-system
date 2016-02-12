@@ -26,8 +26,10 @@ class VisitorController @Inject()(repo: NewVisitorRepository, val messagesApi: M
   }
 
   def getNewVisitor = Action { implicit request =>
-    request.session.get(visitoruuid).fold(Ok(views.html.newVisitor(newVisitorForm))) { _ =>
-      Redirect(routes.Application.index)
+    request.session.get(useruuid).fold(Redirect(routes.UserController.getRegister)) { _ =>
+      request.session.get(visitoruuid).fold(Ok(views.html.newVisitor(newVisitorForm))) { _ =>
+        Redirect(routes.Application.index)
+      }
     }
   }
 
