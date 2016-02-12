@@ -2,17 +2,13 @@
 @import helper._
 @import views.html.templates.main
 
-@(user: Form[NewVisitorForm])(implicit msg: Messages, flash: Flash)
+@(user: Form[NewVisitorForm])(implicit msg: Messages, flash: Flash, session: Session)
 @main(msg("newVisitor")) {
-    <h1>@msg("newVisitor")</h1>
-    <a href="@routes.Application.index()">@msg("home")</a>
     @form(routes.VisitorController.postNewVisitor()) {
         @inputText(user(firstName))
         @inputText(user(lastName))
         @inputText(user(middleName))
         @inputText(user(extraName))
-        <div class="buttons">
-            <input type="submit" value="@msg("newVisitor")"/>
-        </div>
+        <input type="submit" value="@msg("newVisitor")"/>
     }
 }
