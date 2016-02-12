@@ -45,7 +45,7 @@ class VisitorController @Inject()(repo: NewVisitorRepository, val messagesApi: M
         }.recover {
           case e => Logger.error(e.getMessage, e)
             BadRequest(views.html.newVisitor(newVisitorForm.bindFromRequest
-              .withError(firstName, Messages(cantCreateNewVisitor))))
+              .withError(firstName, Messages(newVisitorCreatedUnapproved))))
         }
       }
     )
@@ -61,5 +61,5 @@ object VisitorController {
   val extraName = "extraName"
 
   val newVisitorApplied = "newVisitorApplied"
-  val cantCreateNewVisitor = "cantCreateNewVisitor"
+  val newVisitorCreatedUnapproved = "newVisitorCreatedUnapproved"
 }
