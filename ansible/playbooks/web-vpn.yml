@@ -1,0 +1,12 @@
+---
+# file: web-vpn.yml
+- hosts: web
+  user: ubuntu
+  become: True
+
+  tasks:
+    - file: path=/etc/openvpn state=directory
+    - copy: src=~/repo/vpn/server/ dest=/etc/openvpn
+    - apt: pkg=openvpn state=latest update_cache=yes
+    - file: path='/var/lib/apt/lists/*' state=absent
+    - service: name=openvpn.service state=started
