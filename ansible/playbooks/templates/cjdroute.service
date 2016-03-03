@@ -1,0 +1,11 @@
+[Unit]
+Description=Starts cjdroute
+After=syslog.target network.target
+
+[Service]
+Type=simple
+ExecStart=/bin/sh -c "exec /home/ubuntu/cjdns/cjdroute --nobg < /home/ubuntu/cjdns/cjdroute.conf"
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

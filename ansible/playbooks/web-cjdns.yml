@@ -1,0 +1,21 @@
+---
+# file: web-cjdns.yml
+- hosts: web
+  user: ubuntu
+
+  tasks:
+    - template: src=templates/cjdroute.service dest=/etc/systemd/system/cjdroute.service
+      become: yes
+    - service: name=cjdroute state=stopped
+      become: yes
+    - file: path=~/cjdns state=absent
+      become: yes
+    - unarchive: src=~/repo/cjdns-ubuntu.tar.gz dest=~/
+    - apt: pkg=nodejs state=latest update_cache=yes
+      become: yes
+    - file: path='/var/lib/apt/lists/*' state=absent
+      become: yes
+    - service: name=cjdroute state=started
+      become: yes
+    - command: systemctl enable cjdroute
+      become: yes
