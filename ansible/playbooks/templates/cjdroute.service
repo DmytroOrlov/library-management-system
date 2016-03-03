@@ -4,7 +4,7 @@ After=syslog.target network.target
 
 [Service]
 Type=simple
-ExecStart=/bin/sh -c "exec /home/ubuntu/cjdns/cjdroute --nobg < /home/ubuntu/cjdns/cjdroute.conf"
+ExecStart=/bin/sh -c "exec /home/ubuntu/{{ service_name }}/cjdroute --nobg < /home/ubuntu/{{ service_name }}/cjdroute.conf"
 Restart=always
 
 [Install]

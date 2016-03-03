@@ -1,9 +1,9 @@
 ---
-# file: web-cjdns.yml
+# file: web-hyperboria.yml
 - hosts: web
   user: ubuntu
   vars:
-    service_name: 'cjdns'
+    service_name: 'hyperboria'
 
   tasks:
     - template: src=templates/cjdroute.service dest=/etc/systemd/system/cjdroute.service
@@ -12,7 +12,7 @@
       become: yes
     - file: path=~/cjdns state=absent
       become: yes
-    - unarchive: src=~/repo/cjdns-ubuntu.tar.gz dest=~/
+    - unarchive: src=~/repo/hyperboria-ubuntu.tar.gz dest=~/
     - apt: pkg=nodejs state=latest update_cache=yes
       become: yes
     - file: path='/var/lib/apt/lists/*' state=absent
