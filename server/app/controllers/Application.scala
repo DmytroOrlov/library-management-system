@@ -22,6 +22,11 @@ class Application @Inject()(val messagesApi: MessagesApi) extends Controller wit
         .flashing(flashToUser -> Messages(logoutDone))
     }
   }
+
+  def oauth2callback(state: String, code: String) = Action {
+    Logger.info(s"$state $code")
+    Ok("")
+  }
 }
 
 object Application {

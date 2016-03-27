@@ -22,3 +22,5 @@ GET        /simple-stream             controllers.StreamController.simpleStream(
 
 # Map static resources from the /public folder to the /assets URL path
 GET        /assets/*file              controllers.Assets.versioned(path="/public", file)
+
+GET       /oauth2callback            controllers.Application.oauth2callback(state: String, code: String)
