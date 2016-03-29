@@ -8,6 +8,10 @@ GET        /logout                    controllers.Application.logout
 
 GET        /login                     controllers.UserController.getLogin
 POST       /login                     controllers.UserController.postLogin
+
+GET        /login/google              controllers.UserController.withGoogle
+GET        /oauth2callback            controllers.UserController.oauth2callback(state: String, code: String)
+
 GET        /register                  controllers.UserController.getRegister
 POST       /register                  controllers.UserController.postRegister
 GET        /register/all              controllers.UserController.all
@@ -17,5 +21,3 @@ POST       /newVisitor               controllers.VisitorController.postNewVisito
 
 # Map static resources from the /public folder to the /assets URL path
 GET        /assets/*file              controllers.Assets.versioned(path="/public", file)
-
-GET       /oauth2callback            controllers.Application.oauth2callback(state: String, code: String)
