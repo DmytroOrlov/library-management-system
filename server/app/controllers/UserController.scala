@@ -5,6 +5,7 @@ import java.util.UUID.randomUUID
 
 import akka.stream.scaladsl.Source
 import com.google.inject.Inject
+import com.typesafe.config.Config
 import controllers.UserController._
 import dal.UserRepository
 import models.User
@@ -19,7 +20,7 @@ import sun.misc.BASE64Encoder
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Random
 
-class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
+class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesApi, config: Config)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
   val registerForm: Form[RegisterForm] = Form {
     mapping(
