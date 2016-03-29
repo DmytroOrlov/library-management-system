@@ -17,6 +17,8 @@ val playSlickVersion = "2.0.0"
 
 lazy val clients = Seq(client)
 
+val monifuVer = "1.1"
+
 lazy val server = (project in file("server"))
   .enablePlugins(PlayScala)
   .aggregate(clients.map(projectToRef): _*)
@@ -29,17 +31,15 @@ lazy val server = (project in file("server"))
     scalaJSProjects := clients,
     pipelineStages := Seq(scalaJSProd, gzip),
     libraryDependencies ++= Seq(
-      "org.webjars" % "jquery" % "2.2.1",
+      "org.webjars" % "jquery" % "2.2.2",
       "org.webjars" % "bootstrap" % "3.3.6" exclude("org.webjars", "jquery"),
       "com.vmunier" %% "play-scalajs-scripts" % "0.4.0",
-      "org.monifu" %% "monifu" % "1.1",
+      "org.monifu" %% "monifu" % monifuVer,
 
-      "org.webjars.bower" % "epoch" % "0.6.0",
-      "org.webjars" % "d3js" % "3.5.12",
       "com.typesafe.play" %% "play-slick" % playSlickVersion,
       "com.typesafe.play" %% "play-slick-evolutions" % playSlickVersion,
       "org.postgresql" % "postgresql" % "9.4-1201-jdbc41",
-      "com.h2database" % "h2" % "1.4.190"
+      "com.h2database" % "h2" % "1.4.191"
     )
   )
 
@@ -52,8 +52,8 @@ lazy val client = (project in file("client"))
     persistLauncher in Test := false,
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % "0.9.0",
-      // "be.doeraene" %%% "scalajs-jquery" % "0.9.0",
-      "org.monifu" %%% "monifu" % "1.1"
+      "be.doeraene" %%% "scalajs-jquery" % "0.9.0",
+      "org.monifu" %%% "monifu" % monifuVer
     )
   )
 
