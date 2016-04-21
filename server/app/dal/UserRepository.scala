@@ -80,5 +80,7 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, val vis
   /**
    * List all the users in the database.
    */
-  def list() = db.stream(users.result)
+  def list() = db.stream(
+    users.result.transactionally.withStatementParameters(fetchSize = 1)
+  )
 }

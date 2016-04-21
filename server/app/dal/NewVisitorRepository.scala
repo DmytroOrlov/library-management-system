@@ -40,5 +40,7 @@ class NewVisitorRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, v
     newVisitors += newVisitor
   }.map(_ => newVisitor)
 
-  def list() = db.stream(newVisitors.result)
+  def list() = db.stream(
+    newVisitors.result.transactionally.withStatementParameters(fetchSize = 1)
+  )
 }
