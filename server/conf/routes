@@ -9,8 +9,8 @@ GET        /logout                    controllers.Application.logout
 GET        /login                     controllers.UserController.getLogin
 POST       /login                     controllers.UserController.postLogin
 
-GET        /login/google              controllers.UserController.withGoogle
-GET        /oauth2callback            controllers.UserController.oauth2callback(state: String, code: String)
+GET        /login/google              controllers.GoogleController.withGoogle
+GET        /oauth2callback            controllers.GoogleController.oauth2callback(state: String, code: String)
 
 GET        /register                  controllers.UserController.getRegister
 POST       /register                  controllers.UserController.postRegister
