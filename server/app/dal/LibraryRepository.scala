@@ -31,5 +31,7 @@ class LibraryRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(impl
     libraries += library
   }.map(_ => library)
 
-  def list() = db.stream(libraries.result)
+  def list() = db.stream(
+    libraries.result.transactionally.withStatementParameters(fetchSize = 1)
+  )
 }
