@@ -54,6 +54,8 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, val vis
       ((User.apply _).tupled, User.unapply)
 
     def visitor = foreignKey("visitor_fk", visitorUuid, visitors)(_.uuid)
+
+    def idx = index("user_name_index", name, unique = false)
   }
 
   /**
