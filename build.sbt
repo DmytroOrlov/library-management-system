@@ -13,7 +13,7 @@ lazy val testSettings = Seq(
   )
 )
 
-val playSlickVersion = "2.0.0"
+val playSlickVersion = "2.0.1"
 
 lazy val clients = Seq(client)
 
