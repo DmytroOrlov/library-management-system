@@ -45,5 +45,7 @@ class VisitorRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, val 
     visitors += visitor
   }.map(_ => visitor)
 
-  def list() = db.stream(visitors.result)
+  def list() = db.stream(
+    visitors.result.transactionally.withStatementParameters(fetchSize = 1)
+  )
 }
