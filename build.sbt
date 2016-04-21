@@ -17,7 +17,7 @@ val playSlickVersion = "2.0.0"
 
 lazy val clients = Seq(client)
 
-val monifuVer = "1.1"
+val monifuVer = "1.2"
 
 lazy val server = (project in file("server"))
   .enablePlugins(PlayScala)
