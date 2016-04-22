@@ -29,7 +29,7 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, val vis
   /**
    * Here we define the table. It will have a name of users
    */
-  class Users(tag: Tag) extends Table[User](tag, "user") {
+  class Users(tag: Tag) extends Table[User](tag, "lib_user") {
 
     /** The ID column, which is the primary key, and auto incremented */
     def uuid = column[UUID]("uuid", O.PrimaryKey)
@@ -55,7 +55,7 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, val vis
 
     def visitor = foreignKey("visitor_fk", visitorUuid, visitors)(_.uuid)
 
-    def idx = index("user_name_index", name, unique = false)
+    def idx = index("lib_user_name_index", name, unique = false)
   }
 
   /**
