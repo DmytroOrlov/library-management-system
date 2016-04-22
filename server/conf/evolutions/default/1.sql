@@ -18,7 +18,7 @@ CREATE TABLE "visitor" (
   , UNIQUE ("number", "library_uuid")
 );
 
-CREATE TABLE "user" (
+CREATE TABLE "lib_user" (
   "uuid"           UUID        PRIMARY KEY
   , "name"         VARCHAR     NOT NULL
   , "password"     VARCHAR     NOT NULL
@@ -26,10 +26,10 @@ CREATE TABLE "user" (
   , "created"      TIMESTAMP   NOT NULL           DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX "user_name_index" ON "user"("name");
+CREATE INDEX "lib_user_name_index" ON "lib_user"("name");
 
 CREATE TABLE "new_visitor" (
-  "uuid"           UUID        PRIMARY KEY REFERENCES "user"
+  "uuid"           UUID        PRIMARY KEY REFERENCES "lib_user"
   , "first_name"   VARCHAR     NOT NULL
   , "last_name"    VARCHAR     NOT NULL
   , "middle_name"  VARCHAR
@@ -44,6 +44,6 @@ DROP TABLE "library" IF EXISTS;
 
 DROP TABLE "visitor" IF EXISTS;
 
-DROP TABLE "user" IF EXISTS;
+DROP TABLE "lib_user" IF EXISTS;
 
 DROP TABLE "new_visitor" IF EXISTS;
