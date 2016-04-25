@@ -2,7 +2,7 @@
 # file: web-vpn.yml
 - hosts: web
   remote_user: ubuntu
-  become: True
+  become: yes
 
   tasks:
     - file: path=/etc/openvpn state=directory
