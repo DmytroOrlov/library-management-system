@@ -1,7 +1,7 @@
 ---
 # file: web-hyperboria.yml
 - hosts: web
-  user: ubuntu
+  remote_user: ubuntu
   vars:
     service_name: 'hyperboria'
 
