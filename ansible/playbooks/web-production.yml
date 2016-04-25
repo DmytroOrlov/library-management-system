@@ -1,11 +1,9 @@
 ---
-# file: web-production.yml
 - hosts: web
   remote_user: ubuntu
   vars_prompt:
     - name: "store_password"
       prompt: "Store password"
-
   tasks:
     - template: src=templates/production.conf dest=~/production.conf
     - copy: src=../../../letsencrypt/live/bibliman.com/MyDSKeyStore.jks dest=~/MyDSKeyStore.jks
