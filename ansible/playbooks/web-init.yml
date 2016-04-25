@@ -1,6 +1,6 @@
 ---
 - hosts: web
-  user: ubuntu
+  remote_user: ubuntu
   become: True
   tasks:
     - apt_repository: repo='ppa:webupd8team/java'

@@ -1,7 +1,7 @@
 ---
 # file: web-deploy.yml
 - hosts: web
-  user: ubuntu
+  remote_user: ubuntu
 
   tasks:
     - template: src=templates/server.service dest=/etc/systemd/system/server.service
