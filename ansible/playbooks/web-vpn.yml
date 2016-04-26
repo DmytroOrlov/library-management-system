@@ -1,9 +1,7 @@
 ---
-# file: web-vpn.yml
 - hosts: web
   remote_user: ubuntu
   become: yes
-
   tasks:
     - file: path=/etc/openvpn state=directory
     - copy: src=~/repo/vpn/server/ dest=/etc/openvpn
