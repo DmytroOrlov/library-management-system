@@ -6,5 +6,9 @@
     - file: path=/etc/openvpn state=directory
     - copy: src=~/repo/vpn/server/ dest=/etc/openvpn
     - apt: pkg=openvpn state=latest update_cache=yes
-    - file: path='/var/lib/apt/lists/*' state=absent
-    - service: name=openvpn.service state=started
+      notify:
+        - clean apt lists
+    - service: name=openvpn state=started enabled=yes
+  handlers:
+    - name: clean apt lists
+      file: path='/var/lib/apt/lists/*' state=absent
