@@ -2,16 +2,21 @@
 - hosts: web
   remote_user: ubuntu
   tasks:
-    - template: src=templates/server.service dest=/etc/systemd/system/server.service
-      become: yes
-    - command: systemctl daemon-reload
-      become: yes
-    - service: name=server state=stopped
-      become: yes
-    - file: path='/home/ubuntu/library-management-system-1.0-SNAPSHOT' state=absent
+    - name: stabilize application state
+      file: path="/home/ubuntu/library-management-system-1.0-SNAPSHOT" state=absent
       become: yes
     - unarchive: src=../../server/target/universal/library-management-system-1.0-SNAPSHOT.tgz dest=~/
-    - service: name=server state=started
+    - template: src=templates/server.service dest=/etc/systemd/system/server.service
       become: yes
-    - command: systemctl enable server
+      notify:
+        - update service list
+    - meta: flush_handlers
+
+    - service: name=server state=restarted
+      become: yes
+    - service: name=server state=started enabled=yes
+      become: yes
+  handlers:
+    - name: update service list
+      command: systemctl daemon-reload
       become: yes
