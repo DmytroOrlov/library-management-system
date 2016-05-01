@@ -1,5 +1,5 @@
 [Unit]
-Description=Starts cjdroute
+Description=Starts {{ service_name }}
 After=syslog.target network.target
 
 [Service]
