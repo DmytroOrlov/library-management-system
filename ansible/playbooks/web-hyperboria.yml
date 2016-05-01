@@ -1,23 +1,22 @@
 ---
-# file: web-hyperboria.yml
 - hosts: web
   remote_user: ubuntu
   vars:
-    service_name: 'hyperboria'
+    service_name: "hyperboria"
 
   tasks:
-    - template: src=templates/cjdroute.service dest=/etc/systemd/system/cjdroute.service
+    - template: src=templates/{{ service_name }}.service dest=/etc/systemd/system/{{ service_name }}.service
       become: yes
-    - service: name=cjdroute state=stopped
+    - service: name={{ service_name }} state=stopped
       become: yes
-    - file: path=~/cjdns state=absent
+    - file: path=~/{{ service_name }} state=absent
       become: yes
     - unarchive: src=~/repo/hyperboria-ubuntu.tar.gz dest=~/
     - apt: pkg=nodejs state=latest update_cache=yes
       become: yes
-    - file: path='/var/lib/apt/lists/*' state=absent
+    - file: path="/var/lib/apt/lists/*" state=absent
       become: yes
-    - service: name=cjdroute state=started
+    - service: name={{ service_name }} state=started
       become: yes
-    - command: systemctl enable cjdroute
+    - command: systemctl enable {{ service_name }}
       become: yes
