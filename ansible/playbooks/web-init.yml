@@ -10,5 +10,4 @@
         - clean oracle-jdk8-installer
   handlers:
     - name: clean oracle-jdk8-installer
-      file: path='/var/lib/apt/lists/*' state=absent
       file: path='/var/cache/oracle-jdk8-installer' state=absent
