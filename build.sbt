@@ -1,34 +1,20 @@
 import sbt.Project.projectToRef
 
-val scalaVer = "2.11.8"
-
-lazy val commonSettings = Seq(scalaVersion := scalaVer)
-
-lazy val testSettings = Seq(
-  libraryDependencies ++= Seq(
-    "org.scalatest" %% "scalatest" % "2.2.6" % "test",
-    "org.scalacheck" %% "scalacheck" % "1.12.5" % "test",
-    "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % "test",
-    "org.scalamock" %% "scalamock-scalatest-support" % "3.2.2" % "test"
-  )
-)
-
-val playSlickVersion = "2.0.2"
-
-lazy val clients = Seq(client)
+lazy val jsProjects = Seq(js)
 
 val monifuVer = "1.2"
 
+val playSlickVersion = "2.0.2"
+
 lazy val server = (project in file("server"))
   .enablePlugins(PlayScala)
-  .aggregate(clients.map(projectToRef): _*)
+  .aggregate(jsProjects.map(projectToRef): _*)
   .dependsOn(sharedJvm)
   .settings(commonSettings ++ testSettings: _*)
   .settings(
     name := "library-management-system",
     version := "1.0-SNAPSHOT",
-    routesGenerator := InjectedRoutesGenerator,
-    scalaJSProjects := clients,
+    scalaJSProjects := jsProjects,
     pipelineStages := Seq(scalaJSProd, gzip),
     libraryDependencies ++= Seq(
       "com.github.scribejava" % "scribejava-apis" % "2.5.3",
@@ -45,7 +31,7 @@ lazy val server = (project in file("server"))
     )
   )
 
-lazy val client = (project in file("client"))
+lazy val js = (project in file("client"))
   .enablePlugins(ScalaJSPlugin, ScalaJSPlay)
   .dependsOn(sharedJs)
   .settings(commonSettings: _*)
@@ -58,6 +44,19 @@ lazy val client = (project in file("client"))
       "org.monifu" %%% "monifu" % monifuVer
     )
   )
+
+val scalaVer = "2.11.8"
+
+lazy val commonSettings = Seq(scalaVersion := scalaVer)
+
+lazy val testSettings = Seq(
+  libraryDependencies ++= Seq(
+    "org.scalatest" %% "scalatest" % "2.2.6" % "test",
+    "org.scalacheck" %% "scalacheck" % "1.12.5" % "test",
+    "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % "test",
+    "org.scalamock" %% "scalamock-scalatest-support" % "3.2.2" % "test"
+  )
+)
 
 lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared"))
   .settings(commonSettings: _*)
