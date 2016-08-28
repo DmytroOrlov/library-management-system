@@ -13,7 +13,6 @@ lazy val server = (project in file("server"))
   .settings(commonSettings ++ testSettings: _*)
   .settings(
     name := "library-management-system",
-    version := "1.0-SNAPSHOT",
     scalaJSProjects := jsProjects,
     pipelineStages := Seq(scalaJSProd, gzip),
     libraryDependencies ++= Seq(
