@@ -12,5 +12,5 @@ ansible-playbook -e "secret=`sbt -Dsbt.log.noformat=true 'set showSuccess:=false
 
 Deploy web server
 ```sh
-sbt clean universal:packageZipTarball && ansible-playbook ansible/playbooks/web-deploy.yml
+sbt stage && ansible-playbook ansible/playbooks/web-deploy.yml
 ```
