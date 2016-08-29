@@ -1,6 +1,6 @@
 @import views.html.templates.main
 
-@()(implicit msg: Messages, flash: Flash, session: Session)
+@()(implicit env: play.api.Environment, msg: Messages, flash: Flash, session: Session)
 @main(msg("streams")) {
     <h1>@msg("streams")
         <a class="logo" href="https://monifu.org/">

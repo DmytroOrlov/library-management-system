@@ -2,7 +2,7 @@ import sbt.Project.projectToRef
 
 lazy val jsProjects = Seq(js)
 
-val monifuVer = "1.2"
+val monixVer = "2.0-RC13"
 
 val playSlickVersion = "2.0.2"
 
@@ -20,7 +20,7 @@ lazy val server = (project in file("server"))
       "org.webjars" % "jquery" % "2.2.4",
       "org.webjars" % "bootstrap" % "3.3.6" exclude("org.webjars", "jquery"),
       "com.vmunier" %% "play-scalajs-scripts" % "0.5.0",
-      "org.monifu" %% "monifu" % monifuVer,
+      "io.monix" %% "monix" % monixVer,
 
       "com.typesafe.play" %% "play-slick" % playSlickVersion,
       "com.typesafe.play" %% "play-slick-evolutions" % playSlickVersion,
@@ -38,8 +38,7 @@ lazy val js = (project in file("client"))
     persistLauncher in Test := false,
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % "0.9.0",
-      "be.doeraene" %%% "scalajs-jquery" % "0.9.0",
-      "org.monifu" %%% "monifu" % monifuVer
+      "io.monix" %%% "monix" % monixVer
     )
   )
 

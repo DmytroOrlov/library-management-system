@@ -11,7 +11,6 @@ import com.typesafe.config.Config
 import controllers.UserController._
 import dal.UserRepository
 import models.User
-import monifu.concurrent.Scheduler
 import play.api.Logger
 import play.api.data.Forms._
 import play.api.data.{Form, FormError}
@@ -109,8 +108,6 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
     if (errorForm.errors.collectFirst({ case FormError(_, List(`passwordsNotMatched`), _) => true }).nonEmpty)
       errorForm.withError(password, Messages(passwordsNotMatched))
     else errorForm
-
-  implicit val scheduler = Scheduler(ec)
 
   def all = Action { implicit request =>
     request.session.get(useruuid).fold(Redirect(routes.UserController.getRegister)) { _ =>
