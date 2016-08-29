@@ -19,8 +19,7 @@ lazy val server = (project in file("server"))
       "com.github.scribejava" % "scribejava-apis" % "2.5.3",
       "org.webjars" % "jquery" % "2.2.4",
       "org.webjars" % "bootstrap" % "3.3.6" exclude("org.webjars", "jquery"),
-      // todo update to 0.5.0
-      "com.vmunier" %% "play-scalajs-scripts" % "0.4.0",
+      "com.vmunier" %% "play-scalajs-scripts" % "0.5.0",
       "org.monifu" %% "monifu" % monifuVer,
 
       "com.typesafe.play" %% "play-slick" % playSlickVersion,
