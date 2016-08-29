@@ -9,7 +9,7 @@
         @inputText(user(name))
         @inputPassword(user(password))
         @inputPassword(user(verify))
-        <div><input class="btn btn-default" type="submit" value="@msg("register")"/></div>
-        <div><a class="btn btn-default" href="@routes.GoogleController.withGoogle()">with Google</a></div>
+        <div><input type="submit" value="@msg("register")"/></div>
+        <div><a href="@routes.GoogleController.withGoogle()">with Google</a></div>
     }
 }
