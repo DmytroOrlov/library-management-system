@@ -21,5 +21,3 @@ allUsers = Усі користувачі
 libraryManagementSystem = Автоматизована бібліотечна система
 logout = Вийти
 login = Увійти
-streams = Streams
-viewSource = View the Source
