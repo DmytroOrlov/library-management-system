@@ -1,0 +1,26 @@
+@import UserController._
+
+@()(implicit msg: Messages, session: Session)
+<header class="navbar lms-form-nav">
+    <div class="container">
+        <div class="navbar-header">
+            <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#bs-navbar" aria-expanded="false">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="@routes.Application.index()">@msg("libraryManagementSystem")</a>
+        </div>
+        <nav id="bs-navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="@routes.UserController.all()">@msg("allUsers")</a></li>
+                @session.get(visitoruuid).fold {
+                    <li><a href="@routes.VisitorController.getNewVisitor()">@msg("newVisitor")</a></li>
+                } { _ => }
+                @session.get(useruuid).map { _ =>
+                    <li><a href="@routes.Application.logout()">@msg("logout")</a></li>
+                }
+            </ul>
+        </nav>
+    </div>
+</header>
