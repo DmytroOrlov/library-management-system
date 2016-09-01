@@ -2,8 +2,6 @@ import sbt.Project.projectToRef
 
 lazy val jsProjects = Seq(js)
 
-val monixVer = "2.0-RC13"
-
 val playSlickVersion = "2.0.2"
 
 lazy val server = (project in file("server"))
@@ -18,7 +16,6 @@ lazy val server = (project in file("server"))
     libraryDependencies ++= Seq(
       "com.github.scribejava" % "scribejava-apis" % "2.5.3",
       "com.vmunier" %% "play-scalajs-scripts" % "0.5.0",
-      "io.monix" %% "monix" % monixVer,
 
       "com.typesafe.play" %% "play-slick" % playSlickVersion,
       "com.typesafe.play" %% "play-slick-evolutions" % playSlickVersion,
@@ -35,8 +32,7 @@ lazy val js = (project in file("client"))
     persistLauncher := true,
     persistLauncher in Test := false,
     libraryDependencies ++= Seq(
-      "org.scala-js" %%% "scalajs-dom" % "0.9.0",
-      "io.monix" %%% "monix" % monixVer
+      "org.scala-js" %%% "scalajs-dom" % "0.9.0"
     )
   )
 
@@ -47,9 +43,7 @@ lazy val commonSettings = Seq(scalaVersion := scalaVer)
 lazy val testSettings = Seq(
   libraryDependencies ++= Seq(
     "org.scalatest" %% "scalatest" % "2.2.6" % "test",
-    "org.scalacheck" %% "scalacheck" % "1.12.5" % "test",
-    "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % "test",
-    "org.scalamock" %% "scalamock-scalatest-support" % "3.2.2" % "test"
+    "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % "test"
   )
 )
 
