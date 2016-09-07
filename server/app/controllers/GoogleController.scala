@@ -8,7 +8,7 @@ import play.api.mvc.{Action, Controller}
 
 import scala.util.Random
 
-class GoogleController @Inject() (config: Config) extends Controller {
+class GoogleController @Inject()(config: Config) extends Controller {
   val clientId = config.getString("google.clientId")
   val clientSecret = config.getString("google.clientSecret")
 
