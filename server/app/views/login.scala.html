@@ -8,6 +8,7 @@
     @form(routes.UserController.postLogin()) {
         @inputText(user(name))
         @inputPassword(user(password))
-        <input type="submit" value="@msg("login")"/>
+        <div><input type="submit" value="@msg("login")"/></div>
+        <div><a href="@routes.GoogleController.withGoogle()">with Google</a></div>
     }
 }
