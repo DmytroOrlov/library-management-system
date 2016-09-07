@@ -3,6 +3,7 @@ import sbt.Project.projectToRef
 lazy val jsProjects = Seq(js)
 
 val playSlickVersion = "2.0.2"
+val scribejavaV = "3.1.0"
 
 lazy val server = (project in file("server"))
   .enablePlugins(PlayScala)
@@ -14,7 +15,9 @@ lazy val server = (project in file("server"))
     scalaJSProjects := jsProjects,
     pipelineStages := Seq(scalaJSProd, gzip),
     libraryDependencies ++= Seq(
-      "com.github.scribejava" % "scribejava-apis" % "2.5.3",
+      ws,
+      "com.github.scribejava" % "scribejava-apis" % scribejavaV,
+      "com.github.scribejava" % "scribejava-httpclient-ahc" % scribejavaV,
       "com.vmunier" %% "play-scalajs-scripts" % "0.5.0",
 
       "com.typesafe.play" %% "play-slick" % playSlickVersion,
