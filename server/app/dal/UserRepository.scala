@@ -65,6 +65,15 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, val vis
     users += user
   }.map(_ => user)
 
+  def createOrUpdate(user: User): Future[User] = {
+    db.run {
+      val q = for {u <- users if u.email === user.email} yield u.password
+      q.update(user.password)
+    }.filter(_ == 1).map(_ => user)
+  }.recoverWith {
+    case _ => create(user)
+  }
+
   def passwordFor(email: String): Future[Seq[String]] = db.run(
     filterBy(email).map(_.password).result
   )
