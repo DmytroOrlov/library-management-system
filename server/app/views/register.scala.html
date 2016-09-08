@@ -6,7 +6,7 @@
 @main(msg("register")) {
     <a href="@routes.UserController.getLogin()">@msg("login")</a>
     @form(routes.UserController.postRegister()) {
-        @inputText(user(name))
+        @inputText(user(email))
         @inputPassword(user(password))
         @inputPassword(user(verify))
         <div><input type="submit" value="@msg("register")"/></div>

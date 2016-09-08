@@ -27,15 +27,15 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, val vis
   import visitorRepo._
 
   /**
-   * Here we define the table. It will have a name of users
+   * Here we define the table. It will have a email of users
    */
   class Users(tag: Tag) extends Table[User](tag, "lib_user") {
 
     /** The ID column, which is the primary key, and auto incremented */
     def uuid = column[UUID]("uuid", O.PrimaryKey)
 
-    /** The name column */
-    def name = column[String]("name")
+    /** The email column */
+    def email = column[String]("email")
 
     /** The password column */
     def password = column[String]("password")
@@ -47,15 +47,13 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, val vis
      *
      * It defines how the columns are converted to and from the User object.
      *
-     * In this case, we are simply passing the id, name and page parameters to the User case classes
+     * In this case, we are simply passing the id, email and page parameters to the User case classes
      * apply and unapply methods.
      */
-    def * = (uuid, name, password, visitorUuid.?) <>
+    def * = (uuid, email, password, visitorUuid.?) <>
       ((User.apply _).tupled, User.unapply)
 
     def visitor = foreignKey("visitor_fk", visitorUuid, visitors)(_.uuid)
-
-    def idx = index("lib_user_name_index", name, unique = false)
   }
 
   /**
@@ -63,21 +61,19 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, val vis
    */
   private[dal] val users = TableQuery[Users]
 
-  def createUniqueName(user: User): Future[User] = db.run {
-    filterBy(user.name).result.headOption.flatMap {
-      case None => users += user
-    }.transactionally
+  def create(user: User): Future[User] = db.run {
+    users += user
   }.map(_ => user)
 
-  def passwordFor(name: String): Future[Seq[String]] = db.run(
-    filterBy(name).map(_.password).result
+  def passwordFor(email: String): Future[Seq[String]] = db.run(
+    filterBy(email).map(_.password).result
   )
 
-  def usersBy(name: String): Future[Seq[User]] = db.run(
-    filterBy(name).result
+  def usersBy(email: String): Future[Seq[User]] = db.run(
+    filterBy(email).result
   )
 
-  private def filterBy(name: String) = users.filter(_.name === name)
+  private def filterBy(email: String) = users.filter(_.email === email)
 
   /**
    * List all the users in the database.

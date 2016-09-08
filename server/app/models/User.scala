@@ -5,7 +5,7 @@ import java.util.UUID
 import play.api.http.Writeable
 import play.api.libs.json._
 
-case class User(uuid: UUID, name: String, password: String, visitorUuid: Option[UUID] = None)
+case class User(uuid: UUID, email: String, password: String, visitorUuid: Option[UUID] = None)
 
 object User {
   implicit val format = Json.format[User]

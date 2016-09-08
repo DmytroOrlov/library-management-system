@@ -20,13 +20,12 @@ CREATE TABLE "visitor" (
 
 CREATE TABLE "lib_user" (
   "uuid"           UUID        PRIMARY KEY
-  , "name"         VARCHAR     NOT NULL
+  , "email"         VARCHAR     NOT NULL
   , "password"     VARCHAR     NOT NULL
   , "visitor_uuid" UUID                    UNIQUE REFERENCES "visitor"("uuid")
   , "created"      TIMESTAMP   NOT NULL           DEFAULT CURRENT_TIMESTAMP
+  , UNIQUE ("email")
 );
-
-CREATE INDEX "lib_user_name_index" ON "lib_user"("name");
 
 CREATE TABLE "new_visitor" (
   "uuid"           UUID        PRIMARY KEY REFERENCES "lib_user"

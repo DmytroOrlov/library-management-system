@@ -1,4 +1,4 @@
-name = Имя
+email = E-mail
 password = Пароль
 verify = Пароль повторно
 youAreRegistered = Вы зарегестрированны

@@ -4,15 +4,13 @@ import java.security.MessageDigest
 import java.util.UUID.randomUUID
 
 import akka.stream.scaladsl.Source
-import com.github.scribejava.apis.GoogleApi20
-import com.github.scribejava.core.builder.ServiceBuilder
 import com.google.inject.Inject
 import com.typesafe.config.Config
 import controllers.UserController._
 import dal.UserRepository
 import models.User
 import play.api.Logger
-import play.api.data.Forms._
+import play.api.data.Forms.{email => _, _}
 import play.api.data.{Form, FormError}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc._
@@ -25,7 +23,7 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
 
   val registerForm: Form[RegisterForm] = Form {
     mapping(
-      name -> nonEmptyText,
+      email -> nonEmptyText,
       password -> nonEmptyText,
       verify -> nonEmptyText
     )(RegisterForm.apply)(RegisterForm.unapply) verifying(passwordsNotMatched, validatePassword _)
@@ -33,7 +31,7 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
 
   val loginForm: Form[LoginForm] = Form {
     mapping(
-      name -> nonEmptyText,
+      email -> nonEmptyText,
       password -> nonEmptyText
     )(LoginForm.apply)(LoginForm.unapply)
   }
@@ -64,7 +62,7 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
         Future.successful(BadRequest(views.html.login(errorForm)))
       },
       f => {
-        repo.usersBy(f.name).map { us =>
+        repo.usersBy(f.email).map { us =>
           us.map(u => u -> span(u.password)).collectFirst {
             case (user, (hash, salt)) if hash == toHashSalt(f.password, salt)._1 =>
               redirectWithSession(user)
@@ -85,13 +83,13 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
         Future.successful(BadRequest(views.html.register(withPasswordMatchError(errorForm))))
       },
       form => toHashSalt(form.password, Random.nextInt().toString) match {
-        case (hash, salt) => repo.createUniqueName(User(randomUUID, form.name, combine(hash, salt))).map { user =>
+        case (hash, salt) => repo.create(User(randomUUID, form.email, combine(hash, salt))).map { user =>
           redirectWithSession(user)
             .flashing(flashToUser -> Messages(youAreRegistered))
         }.recover {
           case e => Logger.error(e.getMessage, e)
             BadRequest(views.html.register(registerForm.bindFromRequest
-              .withError(name, Messages(nameRegistered))))
+              .withError(email, Messages(nameRegistered))))
         }
       }
     )
@@ -116,9 +114,9 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
   }
 }
 
-case class RegisterForm(name: String, password: String, verify: String)
+case class RegisterForm(email: String, password: String, verify: String)
 
-case class LoginForm(name: String, password: String)
+case class LoginForm(email: String, password: String)
 
 object UserController {
   val username = "username"
@@ -126,7 +124,7 @@ object UserController {
   val visitoruuid = "visitoruuid"
   val flashToUser = "flashToUser"
 
-  val name = "name"
+  val email = "email"
   val password = "password"
   val verify = "verify"
 
