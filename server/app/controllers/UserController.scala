@@ -39,7 +39,7 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
   def getLogin = Action { implicit request =>
     request.session.get(useruuid).fold(Ok(views.html.login(loginForm))) { _ =>
       Redirect(routes.Application.index)
-        .flashing(flashToUser -> Messages(youAreLoggedin))
+        .flashing(flashToUser -> Messages(youAreLoggedinAs, "<>"))
     }
   }
 
@@ -53,7 +53,7 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
   def postLogin() = Action.async { implicit request =>
     def wrongPassword = BadRequest(
       views.html.login(loginForm.bindFromRequest
-        .withError(password, Messages(passwordNotMatchTheName))
+        .withError(password, Messages(passwordNotMatchEmail))
       )
     )
 
@@ -66,7 +66,7 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
           us.map(u => u -> span(u.password)).collectFirst {
             case (user, (hash, salt)) if hash == toHashSalt(f.password, salt)._1 =>
               redirectWithSession(user)
-                .flashing(flashToUser -> Messages(youAreLoggedin))
+                .flashing(flashToUser -> Messages(youAreLoggedinAs, user.email))
           }.getOrElse(wrongPassword)
         }.recover {
           case e => Logger.error(e.getMessage, e)
@@ -89,7 +89,7 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
         }.recover {
           case e => Logger.error(e.getMessage, e)
             BadRequest(views.html.register(registerForm.bindFromRequest
-              .withError(email, Messages(nameRegistered))))
+              .withError(email, Messages(emailRegistered))))
         }
       }
     )
@@ -119,7 +119,6 @@ case class RegisterForm(email: String, password: String, verify: String)
 case class LoginForm(email: String, password: String)
 
 object UserController {
-  val username = "username"
   val useruuid = "uuid"
   val visitoruuid = "visitoruuid"
   val flashToUser = "flashToUser"
@@ -129,10 +128,10 @@ object UserController {
   val verify = "verify"
 
   val youAreRegistered = "youAreRegistered"
-  val youAreLoggedin = "youAreLoggedin"
-  val nameRegistered = "nameRegistered"
+  val youAreLoggedinAs = "youAreLoggedinAs"
+  val emailRegistered = "emailRegistered"
   val passwordsNotMatched = "passwordsNotMatched"
-  val passwordNotMatchTheName = "passwordNotMatchTheName"
+  val passwordNotMatchEmail = "passwordNotMatchEmail"
   val errorDuringPasswordCheck = "errorDuringPasswordCheck"
 
   def validatePassword(f: RegisterForm) = f.password.equals(f.verify)
