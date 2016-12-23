@@ -2,7 +2,7 @@
 - hosts: web
   remote_user: ubuntu
   vars:
-    service_name: "hyperboria"
+    service_name: "cjdns"
 
   tasks:
     - template: src=templates/{{ service_name }}.service dest=/etc/systemd/system/{{ service_name }}.service
@@ -11,7 +11,7 @@
       become: yes
     - file: path=~/{{ service_name }} state=absent
       become: yes
-    - unarchive: src=~/repo/hyperboria-ubuntu.tar.gz dest=~/
+    - synchronize: src=../../../cjdns-ubuntu/ dest=~/{{ service_name }} delete=yes
     - apt: pkg=nodejs state=latest update_cache=yes
       become: yes
     - file: path="/var/lib/apt/lists/*" state=absent
