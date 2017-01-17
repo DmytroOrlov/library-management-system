@@ -3,7 +3,6 @@ package controllers
 import java.util.UUID
 
 import com.google.inject.Inject
-import controllers.UserController._
 import controllers.VisitorController._
 import dal.NewVisitorRepository
 import models.NewVisitor

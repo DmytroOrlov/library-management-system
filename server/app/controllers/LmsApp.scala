@@ -2,7 +2,6 @@ package controllers
 
 import com.google.inject.Inject
 import controllers.LmsApp._
-import controllers.UserController._
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc._

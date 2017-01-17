@@ -8,7 +8,6 @@ import com.github.scribejava.core.model._
 import com.github.scribejava.httpclient.ahc.AhcHttpClientConfig
 import com.google.inject.Inject
 import com.typesafe.config.Config
-import controllers.UserController._
 import dal.UserRepository
 import models.User
 import org.asynchttpclient.DefaultAsyncHttpClientConfig

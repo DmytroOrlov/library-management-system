@@ -119,16 +119,11 @@ case class RegisterForm(email: String, password: String, verify: String)
 case class LoginForm(email: String, password: String)
 
 object UserController {
-  val useruuid = "uuid"
-  val visitoruuid = "visitoruuid"
-  val flashToUser = "flashToUser"
-
   val email = "email"
   val password = "password"
   val verify = "verify"
 
   val youAreRegistered = "youAreRegistered"
-  val youAreLoggedinAs = "youAreLoggedinAs"
   val emailRegistered = "emailRegistered"
   val passwordsNotMatched = "passwordsNotMatched"
   val passwordNotMatchEmail = "passwordNotMatchEmail"

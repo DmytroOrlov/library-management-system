@@ -10,7 +10,7 @@
         <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/main.css")"/>
     </head>
     <body>
-        <div class="flashToUser">@flash.get(controllers.UserController.flashToUser).getOrElse("")</div>
+        <div class="flashToUser">@flash.get(controllers.flashToUser).getOrElse("")</div>
         @content
     </body>
 </html>
