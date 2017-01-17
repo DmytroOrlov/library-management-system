@@ -1,4 +1,4 @@
-package dal
+package data
 
 import java.util.UUID
 import javax.inject.{Inject, Singleton}
@@ -25,7 +25,7 @@ class LibraryRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(impl
       (Library.tupled, Library.unapply)
   }
 
-  private[dal] val libraries = TableQuery[Libraries]
+  private[data] val libraries = TableQuery[Libraries]
 
   def create(library: Library): Future[Library] = db.run {
     libraries += library

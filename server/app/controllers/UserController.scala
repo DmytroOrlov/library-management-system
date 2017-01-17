@@ -7,7 +7,7 @@ import akka.stream.scaladsl.Source
 import com.google.inject.Inject
 import com.typesafe.config.Config
 import controllers.UserController._
-import dal.UserRepository
+import data.UserRepository
 import models.User
 import play.api.Logger
 import play.api.data.Forms.{email => _, _}

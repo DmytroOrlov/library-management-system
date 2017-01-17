@@ -1,4 +1,4 @@
-package dal
+package data
 
 import java.util.UUID
 import javax.inject.{Inject, Singleton}
@@ -59,7 +59,7 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, val vis
   /**
    * The starting point for all queries on the users table.
    */
-  private[dal] val users = TableQuery[Users]
+  private[data] val users = TableQuery[Users]
 
   def create(user: User): Future[User] = db.run {
     users += user

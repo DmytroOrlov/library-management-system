@@ -1,4 +1,4 @@
-package dal
+package data
 
 import java.util.UUID
 import javax.inject.{Inject, Singleton}
@@ -39,7 +39,7 @@ class VisitorRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, val 
     def library = foreignKey("library_fk", libraryUuid, libraries)(_.uuid)
   }
 
-  private[dal] val visitors = TableQuery[Visitors]
+  private[data] val visitors = TableQuery[Visitors]
 
   def create(visitor: Visitor): Future[Visitor] = db.run {
     visitors += visitor

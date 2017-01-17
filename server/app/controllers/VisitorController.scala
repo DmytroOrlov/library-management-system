@@ -4,7 +4,7 @@ import java.util.UUID
 
 import com.google.inject.Inject
 import controllers.VisitorController._
-import dal.NewVisitorRepository
+import data.NewVisitorRepository
 import models.NewVisitor
 import play.api.Logger
 import play.api.data.Form
