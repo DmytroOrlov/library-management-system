@@ -22,7 +22,7 @@ lazy val server = (project in file("server"))
       "com.typesafe.play" %% "play-slick" % playSlickV,
       "com.typesafe.play" %% "play-slick-evolutions" % playSlickV,
       "org.postgresql" % "postgresql" % "9.4-1201-jdbc41",
-      "com.h2database" % "h2" % "1.4.191"
+      "com.h2database" % "h2" % "1.4.193"
     )
   )
 
