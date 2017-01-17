@@ -2,17 +2,13 @@ package models
 
 import java.util.UUID
 
-import play.api.http.Writeable
-import play.api.libs.json._
-
 case class User(uuid: UUID, email: String, password: String, visitorUuid: Option[UUID] = None)
 
 object User {
+  import play.api.http.Writeable
+  import play.api.libs.json._
   implicit val format = Json.format[User]
-
-  implicit val writes = Json.writes[User]
-
-  implicit def writable(implicit w: Writeable[JsValue]): Writeable[User] = w.map(writes.writes)
+  implicit def writable(implicit w: Writeable[JsValue]): Writeable[User] = w.map(format.writes)
 }
 
 case class Library(uuid: UUID, name: String)
