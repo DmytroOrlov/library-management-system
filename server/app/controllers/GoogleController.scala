@@ -71,7 +71,7 @@ class GoogleController @Inject()(repo: UserRepository, val messagesApi: Messages
               val name = ((profile \ "urls")(0) \ "label").asOpt[String]
 
               promise.completeWith(repo.createOrUpdate(User(randomUUID, email, accessToken.getRefreshToken)).map { user =>
-                val res = Redirect(routes.Application.index)
+                val res = Redirect(routes.LmsApp.index)
                   .withSession(useruuid -> user.uuid.toString)
                   .flashing(flashToUser -> Messages(youAreLoggedinAs, name.getOrElse(email)))
                 user.visitorUuid.fold(res) { v =>

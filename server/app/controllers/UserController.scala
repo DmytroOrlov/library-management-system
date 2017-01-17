@@ -38,14 +38,14 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
 
   def getLogin = Action { implicit request =>
     request.session.get(useruuid).fold(Ok(views.html.login(loginForm))) { _ =>
-      Redirect(routes.Application.index)
+      Redirect(routes.LmsApp.index)
         .flashing(flashToUser -> Messages(youAreLoggedinAs, "<>"))
     }
   }
 
   def getRegister = Action { implicit request =>
     request.session.get(useruuid).fold(Ok(views.html.register(registerForm))) { _ =>
-      Redirect(routes.Application.index)
+      Redirect(routes.LmsApp.index)
         .flashing(flashToUser -> Messages(youAreRegistered))
     }
   }
@@ -96,7 +96,7 @@ class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesAp
   }
 
   def redirectWithSession(u: User)(implicit request: Request[AnyContent]) = {
-    val res = Redirect(routes.Application.index).withSession(useruuid -> u.uuid.toString)
+    val res = Redirect(routes.LmsApp.index).withSession(useruuid -> u.uuid.toString)
     u.visitorUuid.fold(res) { u =>
       res.addingToSession(visitoruuid -> u.toString)
     }

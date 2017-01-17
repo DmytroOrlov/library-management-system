@@ -1,13 +1,13 @@
 package controllers
 
 import com.google.inject.Inject
-import controllers.Application._
+import controllers.LmsApp._
 import controllers.UserController._
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc._
 
-class Application @Inject()(val messagesApi: MessagesApi) extends Controller with I18nSupport {
+class LmsApp @Inject()(val messagesApi: MessagesApi) extends Controller with I18nSupport {
   def index = Action { implicit request =>
     Logger.info(request.acceptLanguages.map(_.code).mkString(", "))
     request.session.get(useruuid).fold(Redirect(routes.UserController.getRegister)) { _ =>
@@ -24,6 +24,6 @@ class Application @Inject()(val messagesApi: MessagesApi) extends Controller wit
   }
 }
 
-object Application {
+object LmsApp {
   val logoutDone = "logoutDone"
 }

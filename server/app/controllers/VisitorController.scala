@@ -28,7 +28,7 @@ class VisitorController @Inject()(repo: NewVisitorRepository, val messagesApi: M
   def getNewVisitor = Action { implicit request =>
     request.session.get(useruuid).fold(Redirect(routes.UserController.getRegister)) { _ =>
       request.session.get(visitoruuid).fold(Ok(views.html.newVisitor(newVisitorForm))) { _ =>
-        Redirect(routes.Application.index)
+        Redirect(routes.LmsApp.index)
       }
     }
   }
@@ -38,9 +38,9 @@ class VisitorController @Inject()(repo: NewVisitorRepository, val messagesApi: M
       errorForm => {
         Future.successful(BadRequest(views.html.newVisitor(errorForm)))
       },
-      f => request.session.get(useruuid).fold(Future.successful(Redirect(routes.Application.index))) { id =>
+      f => request.session.get(useruuid).fold(Future.successful(Redirect(routes.LmsApp.index))) { id =>
         repo.create(NewVisitor(UUID.fromString(id), f.firstName, f.lastName, Some(f.middleName), Some(f.extraName))).map { _ =>
-          Redirect(routes.Application.index)
+          Redirect(routes.LmsApp.index)
             .flashing(flashToUser -> Messages(newVisitorApplied))
         }.recover {
           case e => Logger.error(e.getMessage, e)

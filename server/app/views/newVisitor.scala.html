@@ -4,7 +4,7 @@
 
 @(user: Form[NewVisitorForm])(implicit msg: Messages, flash: Flash, session: Session)
 @main(msg("newVisitor")) {
-    <a href="@routes.Application.index()">@msg("home")</a>
+    <a href="@routes.LmsApp.index()">@msg("home")</a>
     @form(routes.VisitorController.postNewVisitor()) {
         @inputText(user(firstName))
         @inputText(user(lastName))

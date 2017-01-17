@@ -7,5 +7,5 @@
     @session.get(visitoruuid).fold {
         <div><a href="@routes.VisitorController.getNewVisitor()">@msg("newVisitor")</a></div>
     } { _ => }
-    <div><a href="@routes.Application.logout()">@msg("logout")</a></div>
+    <div><a href="@routes.LmsApp.logout()">@msg("logout")</a></div>
 }

@@ -3,8 +3,8 @@
 # ~~~~
 
 # Home page
-GET        /                          controllers.Application.index
-GET        /logout                    controllers.Application.logout
+GET        /                          controllers.LmsApp.index
+GET        /logout                    controllers.LmsApp.logout
 
 GET        /login                     controllers.UserController.getLogin
 POST       /login                     controllers.UserController.postLogin
