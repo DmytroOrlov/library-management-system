@@ -7,8 +7,9 @@ lazy val server = (project in file("server"))
   .enablePlugins(PlayScala)
   .aggregate(clients.map(projectToRef): _*)
   .dependsOn(sharedJvm)
-  .settings(commonSettings ++ testSettings: _*)
   .settings(
+    commonSettings,
+    testSettings,
     name := "library-management-system",
     scalaJSProjects := clients,
     pipelineStages := Seq(scalaJSProd, gzip),
@@ -29,8 +30,8 @@ lazy val server = (project in file("server"))
 lazy val client = (project in file("client"))
   .enablePlugins(ScalaJSPlugin, ScalaJSPlay)
   .dependsOn(sharedJs)
-  .settings(commonSettings: _*)
   .settings(
+    commonSettings,
     persistLauncher := true,
     persistLauncher in Test := false,
     libraryDependencies ++= Seq(
@@ -41,7 +42,7 @@ lazy val client = (project in file("client"))
 lazy val clients = Seq(client)
 
 lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared"))
-  .settings(commonSettings: _*)
+  .settings(commonSettings)
   .jsConfigure(_ enablePlugins ScalaJSPlay)
 
 lazy val sharedJvm = shared.jvm
