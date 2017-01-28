@@ -8,8 +8,10 @@ lazy val server = project
   .aggregate(clients.map(projectToRef): _*)
   .dependsOn(sharedJvm)
   .settings(
-    version in ThisBuild := "1.0-SNAPSHOT",
-    commonSettings,
+    inThisBuild(Seq(
+      version := "1.0-SNAPSHOT",
+      scalaVersion := "2.11.8"
+    )),
     testSettings,
     name := "library-management-system",
     scalaJSProjects := clients,
@@ -32,7 +34,6 @@ lazy val client = project
   .enablePlugins(ScalaJSPlugin, ScalaJSPlay)
   .dependsOn(sharedJs)
   .settings(
-    commonSettings,
     persistLauncher := true,
     persistLauncher in Test := false,
     libraryDependencies ++= Seq(
@@ -43,13 +44,11 @@ lazy val client = project
 lazy val clients = Seq(client)
 
 lazy val shared = crossProject.crossType(CrossType.Pure)
-  .settings(commonSettings)
   .jsConfigure(_ enablePlugins ScalaJSPlay)
 
 lazy val sharedJvm = shared.jvm
 lazy val sharedJs = shared.js
 
-lazy val commonSettings = Seq(scalaVersion := "2.11.8")
 lazy val testSettings = Seq(
   libraryDependencies ++= Seq(
     "org.scalatest" %% "scalatest" % "2.2.6" % Test,
