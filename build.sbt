@@ -51,8 +51,8 @@ lazy val sharedJs = shared.js
 lazy val commonSettings = Seq(scalaVersion := "2.11.8")
 lazy val testSettings = Seq(
   libraryDependencies ++= Seq(
-    "org.scalatest" %% "scalatest" % "2.2.6" % "test",
-    "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % "test"
+    "org.scalatest" %% "scalatest" % "2.2.6" % Test,
+    "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test
   )
 )
 
