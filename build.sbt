@@ -8,6 +8,7 @@ lazy val server = project
   .aggregate(clients.map(projectToRef): _*)
   .dependsOn(sharedJvm)
   .settings(
+    version in ThisBuild := "1.0-SNAPSHOT",
     commonSettings,
     testSettings,
     name := "library-management-system",
