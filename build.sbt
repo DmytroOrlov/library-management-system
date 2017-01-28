@@ -3,7 +3,7 @@ import sbt.Project.projectToRef
 lazy val playSlickV = "2.0.2"
 lazy val scribejavaV = "3.1.0"
 
-lazy val server = (project in file("server"))
+lazy val server = project
   .enablePlugins(PlayScala)
   .aggregate(clients.map(projectToRef): _*)
   .dependsOn(sharedJvm)
@@ -27,7 +27,7 @@ lazy val server = (project in file("server"))
     )
   )
 
-lazy val client = (project in file("client"))
+lazy val client = project
   .enablePlugins(ScalaJSPlugin, ScalaJSPlay)
   .dependsOn(sharedJs)
   .settings(
@@ -41,7 +41,7 @@ lazy val client = (project in file("client"))
 
 lazy val clients = Seq(client)
 
-lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared"))
+lazy val shared = crossProject.crossType(CrossType.Pure)
   .settings(commonSettings)
   .jsConfigure(_ enablePlugins ScalaJSPlay)
 
