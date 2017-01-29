@@ -9,7 +9,7 @@ import com.typesafe.config.Config
 import controllers.UserController._
 import data.UserRepository
 import models.User
-import play.api.Logger
+import play.api.{Environment, Logger}
 import play.api.data.Forms.{email => _, _}
 import play.api.data.{Form, FormError}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -19,7 +19,7 @@ import sun.misc.BASE64Encoder
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Random
 
-class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesApi, config: Config)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
+class UserController @Inject()(repo: UserRepository, val messagesApi: MessagesApi, config: Config)(implicit ec: ExecutionContext, env: Environment) extends Controller with I18nSupport {
 
   val registerForm: Form[RegisterForm] = Form {
     mapping(
