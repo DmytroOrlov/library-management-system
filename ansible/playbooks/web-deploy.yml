@@ -2,7 +2,7 @@
 - hosts: web
   remote_user: ubuntu
   tasks:
-    - synchronize: src=../../server/target/universal/stage/ dest=~/library-management-system delete=yes rsync_opts="--exclude=logs"
+    - synchronize: src=../../target/universal/stage/ dest=~/library-management-system delete=yes rsync_opts="--exclude=logs"
 
 - hosts: web
   remote_user: ubuntu
