@@ -49,8 +49,8 @@ class LmsAppSpec extends PlaySpec with MustMatchers with OneAppPerSuite with Sca
     }
     "takes posted visitor" should {
       "add one to db" in {
-        val fName = Random.nextInt.toString
-        val lName = Random.nextInt.toString
+        val fName = Random.nextInt().toString
+        val lName = Random.nextInt().toString
         val res = route(app, FakeRequest(POST, "/register").withFormUrlEncodedBody(
           firstName -> fName,
           lastName -> lName,

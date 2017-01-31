@@ -9,7 +9,7 @@ import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import util.MockitoSugar
+import util.{MockMessagesApi, MockitoSugar}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -50,6 +50,30 @@ class VisitorControllerSpec extends PlaySpec with MustMatchers with MockitoSugar
         )
         status(res) mustBe OK
         contentAsString(res) mustBe Json.toJson(visitor).toString
+      }
+      "reject without firstName" in {
+        val controller = new VisitorController(mock[VisitorRepo], MockMessagesApi)
+        val res = controller.postRegister(
+          FakeRequest(POST, "/register").withFormUrlEncodedBody(
+            firstName -> "",
+            lastName -> "2",
+            middleName -> "",
+            extraName -> ""
+          )
+        )
+        status(res) mustBe BAD_REQUEST
+      }
+      "reject without lastName" in {
+        val controller = new VisitorController(mock[VisitorRepo], MockMessagesApi)
+        val res = controller.postRegister(
+          FakeRequest(POST, "/register").withFormUrlEncodedBody(
+            firstName -> "1",
+            lastName -> "",
+            middleName -> "",
+            extraName -> ""
+          )
+        )
+        status(res) mustBe BAD_REQUEST
       }
     }
   }
