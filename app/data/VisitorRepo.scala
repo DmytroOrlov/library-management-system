@@ -13,9 +13,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @ImplementedBy(classOf[VisitorRepoImpl])
 trait VisitorRepo {
-  def create(visitor: Visitor): Future[Visitor]
+  def add(visitor: Visitor): Future[Visitor]
 
-  def list(): Source[Visitor, NotUsed]
+  def list: Source[Visitor, NotUsed]
 }
 
 @Singleton
@@ -26,7 +26,7 @@ class VisitorRepoImpl @Inject()(dbConfigProvider: DatabaseConfigProvider)(implic
   import driver.api._
 
   class Visitors(tag: Tag) extends Table[Visitor](tag, "visitor") {
-    def id = column[Int]("id", O.PrimaryKey)
+    def id = column[Int]("id", O.AutoInc, O.PrimaryKey)
 
     def firstName = column[String]("first_name")
 
@@ -42,11 +42,13 @@ class VisitorRepoImpl @Inject()(dbConfigProvider: DatabaseConfigProvider)(implic
 
   val visitors = TableQuery[Visitors]
 
-  def create(visitor: Visitor): Future[Visitor] = db.run {
-    visitors += visitor
-  }.collect { case 1 => visitor }
+  def add(visitor: Visitor): Future[Visitor] = db.run {
+    (visitors returning visitors.map(_.id)
+      into ((v, id) => v.copy(id = Some(id)))
+      ) += visitor
+  }
 
-  def list(): Source[Visitor, NotUsed] = Source.fromPublisher(
+  def list: Source[Visitor, NotUsed] = Source.fromPublisher(
     db.stream(
       visitors.result.transactionally.withStatementParameters(fetchSize = 1)
     )

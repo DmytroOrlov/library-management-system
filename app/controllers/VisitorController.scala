@@ -15,12 +15,12 @@ class VisitorController @Inject()(visitors: VisitorRepo)(implicit ec: ExecutionC
   }
 
   def registerDb(name: String) = Action.async {
-    visitors.create(Visitor(name, name, None, None)).map { v =>
+    visitors.add(Visitor(firstName = name, lastName = name, middleName = None, extraName = None)).map { v =>
       Ok(v.toString)
     }
   }
 
   def registered = Action {
-    Ok.chunked(visitors.list())
+    Ok.chunked(visitors.list)
   }
 }
