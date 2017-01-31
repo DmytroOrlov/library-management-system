@@ -1,3 +1,4 @@
-GET        /                          controllers.LmsApp.index
+GET        /                          controllers.LmsController.home
+GET        /register                  controllers.VisitorController.register
 
 GET        /assets/*file              controllers.Assets.versioned(path="/public", file)

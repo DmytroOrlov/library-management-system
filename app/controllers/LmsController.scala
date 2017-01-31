@@ -5,8 +5,8 @@ import javax.inject.Singleton
 import play.api.mvc._
 
 @Singleton
-class LmsApp extends Controller {
-  def index = Action {
-    Ok("1")
+class LmsController extends Controller {
+  def home = Action {
+    Ok(views.html.home())
   }
 }
