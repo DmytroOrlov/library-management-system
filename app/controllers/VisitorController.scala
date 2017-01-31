@@ -2,7 +2,6 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import akka.stream.scaladsl.Source
 import data.VisitorRepo
 import models.Visitor
 import play.api.mvc._
@@ -22,6 +21,6 @@ class VisitorController @Inject()(visitors: VisitorRepo)(implicit ec: ExecutionC
   }
 
   def registered = Action {
-    Ok.chunked(Source.fromPublisher(visitors.list()))
+    Ok.chunked(visitors.list())
   }
 }

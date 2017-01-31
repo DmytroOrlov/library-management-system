@@ -11,6 +11,7 @@ lazy val `library-management-system` = (project in file("."))
       "org.postgresql" % "postgresql" % "9.4-1201-jdbc41",
       "com.h2database" % "h2" % "1.4.193",
 
-      "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test
+      "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test,
+      "org.mockito" % "mockito-core" % "2.7.0" % Test
     )
   )

@@ -2,15 +2,24 @@ package data
 
 import javax.inject.{Inject, Singleton}
 
+import akka.NotUsed
+import akka.stream.scaladsl.Source
+import com.google.inject.ImplementedBy
 import models.Visitor
 import play.api.db.slick.DatabaseConfigProvider
-import slick.backend.DatabasePublisher
 import slick.driver.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 
+@ImplementedBy(classOf[VisitorRepoImpl])
+trait VisitorRepo {
+  def create(visitor: Visitor): Future[Visitor]
+
+  def list(): Source[Visitor, NotUsed]
+}
+
 @Singleton
-class VisitorRepo @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
+class VisitorRepoImpl @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) extends VisitorRepo {
   val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
@@ -31,13 +40,15 @@ class VisitorRepo @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit e
       ((Visitor.apply _).tupled, Visitor.unapply)
   }
 
-  private[data] val visitors = TableQuery[Visitors]
+  val visitors = TableQuery[Visitors]
 
   def create(visitor: Visitor): Future[Visitor] = db.run {
     visitors += visitor
   }.collect { case 1 => visitor }
 
-  def list(): DatabasePublisher[Visitor] = db.stream(
-    visitors.result.transactionally.withStatementParameters(fetchSize = 1)
+  def list(): Source[Visitor, NotUsed] = Source.fromPublisher(
+    db.stream(
+      visitors.result.transactionally.withStatementParameters(fetchSize = 1)
+    )
   )
 }
