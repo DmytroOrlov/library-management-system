@@ -1,0 +1,14 @@
+@import VisitorController._
+@import helper._
+@import views.html.templates.main
+
+@(visitor: Form[RegisterForm])(implicit msg: Messages)
+@main("Регистрация") {
+    @form(routes.VisitorController.postRegister()) {
+        @inputText(visitor(firstName))
+        @inputText(visitor(lastName))
+        @inputText(visitor(middleName))
+        @inputText(visitor(extraName))
+        <div><input type="submit" value="Зарегистрировать"/></div>
+    }
+}

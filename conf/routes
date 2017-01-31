@@ -1,5 +1,6 @@
 GET        /                        controllers.LmsController.home
 GET        /register                controllers.VisitorController.register
+POST       /register                controllers.VisitorController.postRegister
 GET        /registerdb/:name        controllers.VisitorController.registerDb(name: String)
 GET        /registered              controllers.VisitorController.registered
 
