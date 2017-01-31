@@ -1,18 +1,23 @@
+import controllers.VisitorController._
 import data.VisitorRepo
 import models.Visitor
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen
+import org.scalamock.scalatest.MockFactory
 import org.scalatest.MustMatchers
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.time.Span._
 import org.scalatestplus.play.{OneAppPerSuite, PlaySpec}
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import util.MockitoSugar
 
 import scala.concurrent.duration._
+import scala.util.Random
 
-class LmsAppSpec extends PlaySpec with MustMatchers with OneAppPerSuite with ScalaFutures with PropertyChecks {
+class LmsAppSpec extends PlaySpec with MustMatchers with OneAppPerSuite with ScalaFutures with PropertyChecks with MockitoSugar with MockFactory {
   implicit val patience = PatienceConfig(1.second, 10.millis)
   implicit val mat = app.materializer
   val inject = app.injector
@@ -40,6 +45,25 @@ class LmsAppSpec extends PlaySpec with MustMatchers with OneAppPerSuite with Sca
         contentAsString(res) must include("middleName")
         contentAsString(res) must include("extraName")
         contentAsString(res) must include("Зарегистрировать")
+      }
+    }
+    "takes posted visitor" should {
+      "add one to db" in {
+        val fName = Random.nextInt.toString
+        val lName = Random.nextInt.toString
+        val res = route(app, FakeRequest(POST, "/register").withFormUrlEncodedBody(
+          firstName -> fName,
+          lastName -> lName,
+          middleName -> "",
+          extraName -> ""
+        )).get
+        status(res) mustBe OK
+        Json.fromJson[Visitor](Json.parse(contentAsString(res))).get must have(
+          'firstName (fName),
+          'lastName (lName),
+          'middleName (None),
+          'extraName (None)
+        )
       }
     }
     "register visitor" should {

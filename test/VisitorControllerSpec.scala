@@ -6,6 +6,7 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.MustMatchers
 import org.scalatestplus.play.PlaySpec
 import play.api.i18n.MessagesApi
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import util.MockitoSugar
@@ -47,7 +48,8 @@ class VisitorControllerSpec extends PlaySpec with MustMatchers with MockitoSugar
             extraName -> ""
           )
         )
-        status(res) mustBe SEE_OTHER
+        status(res) mustBe OK
+        contentAsString(res) mustBe Json.toJson(visitor).toString
       }
     }
   }

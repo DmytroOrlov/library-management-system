@@ -38,8 +38,8 @@ class VisitorController @Inject()(visitors: VisitorRepo, val messagesApi: Messag
     }, {
       case RegisterForm(f, l, m, e) =>
         def strToOption(s: String) = if (s.isEmpty) None else Some(s)
-        visitors.add(Visitor(f, l, strToOption(m), strToOption(e))).map { _ =>
-          SeeOther(routes.VisitorController.registered().url)
+        visitors.add(Visitor(f, l, strToOption(m), strToOption(e))).map { v =>
+          Ok(v)
         }
     })
   }
