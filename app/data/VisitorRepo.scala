@@ -4,6 +4,7 @@ import javax.inject.{Inject, Singleton}
 
 import models.Visitor
 import play.api.db.slick.DatabaseConfigProvider
+import slick.backend.DatabasePublisher
 import slick.driver.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -26,17 +27,17 @@ class VisitorRepo @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit e
 
     def extraName = column[String]("extra_name")
 
-    def * = (id, firstName, lastName, middleName.?, extraName.?) <>
-      (Visitor.tupled, Visitor.unapply)
+    def * = (firstName, lastName, middleName.?, extraName.?, id.?) <>
+      ((Visitor.apply _).tupled, Visitor.unapply)
   }
 
   private[data] val visitors = TableQuery[Visitors]
 
   def create(visitor: Visitor): Future[Visitor] = db.run {
     visitors += visitor
-  }.map(_ => visitor)
+  }.collect { case 1 => visitor }
 
-  def list() = db.stream(
+  def list(): DatabasePublisher[Visitor] = db.stream(
     visitors.result.transactionally.withStatementParameters(fetchSize = 1)
   )
 }

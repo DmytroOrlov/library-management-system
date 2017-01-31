@@ -1,4 +1,6 @@
-GET        /                          controllers.LmsController.home
-GET        /register                  controllers.VisitorController.register
+GET        /                        controllers.LmsController.home
+GET        /register                controllers.VisitorController.register
+GET        /registerdb/:name        controllers.VisitorController.registerDb(name: String)
+GET        /registered              controllers.VisitorController.registered
 
-GET        /assets/*file              controllers.Assets.versioned(path="/public", file)
+GET        /assets/*file            controllers.Assets.versioned(path="/public", file)
