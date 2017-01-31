@@ -10,7 +10,7 @@ import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class VisitorController @Inject()(visitors: VisitorRepo, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
@@ -27,21 +27,21 @@ class VisitorController @Inject()(visitors: VisitorRepo, val messagesApi: Messag
     Ok(views.html.register(registerForm))
   }
 
-  val postRegister = Action { implicit request =>
-    registerForm.bindFromRequest.fold(
-      errorForm => BadRequest(views.html.register(errorForm)),
-      f => Ok("1")
-    )
-  }
-
-  def registerDb(name: String) = Action.async {
-    visitors.add(Visitor(firstName = name, lastName = name, middleName = None, extraName = None)).map { v =>
-      Ok(v.toString)
-    }
-  }
-
-  def registered = Action {
+  val registered = Action {
     Ok.chunked(visitors.list)
+  }
+
+  val postRegister = Action.async { implicit request =>
+    registerForm.bindFromRequest.fold(
+    errorForm => {
+      Future.successful(BadRequest(views.html.register(errorForm)))
+    }, {
+      case RegisterForm(f, l, m, e) =>
+        def strToOption(s: String) = if (s.isEmpty) None else Some(s)
+        visitors.add(Visitor(f, l, strToOption(m), strToOption(e))).map { _ =>
+          SeeOther(routes.VisitorController.registered().url)
+        }
+    })
   }
 }
 

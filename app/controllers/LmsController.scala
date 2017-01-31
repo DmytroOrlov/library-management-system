@@ -6,7 +6,7 @@ import play.api.mvc._
 
 @Singleton
 class LmsController extends Controller {
-  def home = Action {
+  val home = Action {
     Ok(views.html.home())
   }
 }

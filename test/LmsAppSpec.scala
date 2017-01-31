@@ -29,11 +29,17 @@ class LmsAppSpec extends PlaySpec with MustMatchers with OneAppPerSuite with Sca
     }
     "takes register visitor request" should {
       "return it" in {
-        val home = route(app, FakeRequest(GET, "/register")).get
+        val res = route(app, FakeRequest(GET, "/register")).get
 
-        status(home) mustBe OK
-        contentType(home) mustBe Some("text/plain")
-        contentAsString(home) mustBe "1"
+        status(res) mustBe OK
+        contentType(res) mustBe Some("text/html")
+        contentAsString(res) must include("Регистрация")
+        contentAsString(res) must include("form")
+        contentAsString(res) must include("firstName")
+        contentAsString(res) must include("lastName")
+        contentAsString(res) must include("middleName")
+        contentAsString(res) must include("extraName")
+        contentAsString(res) must include("Зарегистрировать")
       }
     }
     "register visitor" should {
