@@ -2,6 +2,7 @@ package app
 
 import controllers.LmsControllerSpec._
 import controllers.VisitorController._
+import controllers.VisitorControllerSpec._
 import data.VisitorRepo
 import models.Visitor
 import org.scalacheck.Arbitrary._
@@ -13,10 +14,12 @@ import org.scalatest.prop.PropertyChecks
 import org.scalatest.time.Span._
 import org.scalatestplus.play.{OneAppPerSuite, PlaySpec}
 import play.api.libs.json.Json
+import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import util.MockitoSugar
 
+import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.util.Random
 
@@ -30,30 +33,28 @@ class LmsAppSpec extends PlaySpec with MustMatchers with OneAppPerSuite with Sca
       "return it" in testHomePage(route(app, FakeRequest(GET, "/")).get)
     }
     "takes register visitor request" should {
-      "return it" in {
-        val res = route(app, FakeRequest(GET, "/register")).get
-
+      "return it" in testRegisterVisitorPage(route(app, FakeRequest(GET, "/register")).get)
+    }
+    "takes registered request" should {
+      "return visitors" in {
+        val fName = Random.nextInt().toString
+        val lName = Random.nextInt().toString
+        register(fName, lName)
+        val res = route(app, FakeRequest(GET, "/registered")).get
         status(res) mustBe OK
-        contentType(res) mustBe Some("text/html")
-        contentAsString(res) must include("Регистрация")
-        contentAsString(res) must include("form")
-        contentAsString(res) must include("firstName")
-        contentAsString(res) must include("lastName")
-        contentAsString(res) must include("middleName")
-        contentAsString(res) must include("extraName")
-        contentAsString(res) must include("Зарегистрировать")
+        val jsons = s"""[${contentAsString(res).replace("}{", "},{")}]"""
+        val vs = Json.fromJson[List[Visitor]](Json.parse(jsons)).get
+        vs.exists {
+          case Visitor(`fName`, `lName`, _, _, _) => true
+          case _ => false
+        } mustBe true
       }
     }
     "takes posted visitor" should {
       "add one to db" in {
         val fName = Random.nextInt().toString
         val lName = Random.nextInt().toString
-        val res = route(app, FakeRequest(POST, "/register").withFormUrlEncodedBody(
-          firstName -> fName,
-          lastName -> lName,
-          middleName -> "",
-          extraName -> ""
-        )).get
+        val res = register(fName, lName).get
         status(res) mustBe OK
         Json.fromJson[Visitor](Json.parse(contentAsString(res))).get must have(
           'firstName (fName),
@@ -81,6 +82,15 @@ class LmsAppSpec extends PlaySpec with MustMatchers with OneAppPerSuite with Sca
         folded mustBe true
       }
     }
+  }
+
+  def register(fName: String, lName: String): Option[Future[Result]] = {
+    route(app, FakeRequest(POST, "/register").withFormUrlEncodedBody(
+      firstName -> fName,
+      lastName -> lName,
+      middleName -> "",
+      extraName -> ""
+    ))
   }
 
   val visitors: Gen[Visitor] = for {

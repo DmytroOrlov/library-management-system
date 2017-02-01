@@ -27,7 +27,6 @@ class VisitorController @Inject()(visitors: VisitorRepo, val messagesApi: Messag
     Ok(views.html.register(registerForm))
   }
 
-  //todo add test
   val registered = Action {
     Ok.chunked(visitors.list)
   }
