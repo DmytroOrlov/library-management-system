@@ -1,4 +1,5 @@
-import controllers.VisitorController
+package controllers
+
 import controllers.VisitorController._
 import data.VisitorRepo
 import models.Visitor

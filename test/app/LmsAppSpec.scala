@@ -1,3 +1,6 @@
+package app
+
+import controllers.LmsControllerSpec._
 import controllers.VisitorController._
 import data.VisitorRepo
 import models.Visitor
@@ -24,13 +27,7 @@ class LmsAppSpec extends PlaySpec with MustMatchers with OneAppPerSuite with Sca
 
   "Lms App" when {
     "takes home page request" should {
-      "return it" in {
-        val home = route(app, FakeRequest(GET, "/")).get
-
-        status(home) mustBe OK
-        contentType(home) mustBe Some("text/html")
-        contentAsString(home) must include("Регистрация читателя")
-      }
+      "return it" in testHomePage(route(app, FakeRequest(GET, "/")).get)
     }
     "takes register visitor request" should {
       "return it" in {
