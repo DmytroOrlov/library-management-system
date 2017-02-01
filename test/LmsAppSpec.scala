@@ -29,7 +29,7 @@ class LmsAppSpec extends PlaySpec with MustMatchers with OneAppPerSuite with Sca
 
         status(home) mustBe OK
         contentType(home) mustBe Some("text/html")
-        contentAsString(home) must include("Регистрация пользователя")
+        contentAsString(home) must include("Регистрация читателя")
       }
     }
     "takes register visitor request" should {

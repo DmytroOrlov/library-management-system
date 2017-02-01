@@ -13,7 +13,7 @@ class LmsControllerSpec extends PlaySpec with MustMatchers {
 
         status(res) mustBe OK
         contentType(res) mustBe Some("text/html")
-        contentAsString(res) must include("Регистрация пользователя")
+        contentAsString(res) must include("Регистрация читателя")
       }
     }
   }
