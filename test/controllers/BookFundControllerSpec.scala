@@ -10,12 +10,13 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import util.MockitoSugar
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class BookFundControllerSpec extends PlaySpec with MockitoSugar {
   "BookFund controller" when {
     "takes add book page request" should {
-      "return it" in testAddBookPage((new BookFundController(mockito[BookRepo], mockito[MessagesApi])).add(FakeRequest()))
+      "return it" in testAddBookPage(new BookFundController(mockito[BookRepo], mockito[MessagesApi]).add(FakeRequest()))
     }
   }
 }

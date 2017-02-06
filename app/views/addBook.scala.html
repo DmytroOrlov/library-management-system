@@ -1,0 +1,14 @@
+@import BookFundController._
+@import helper._
+@import views.html.templates.main
+
+@(book: Form[AddBookForm])(implicit msg: Messages)
+@main("Добавление новой книги") {
+    @form(routes.BookFundController.postBook()) {
+        @inputText(book(author))
+        @inputText(book(title))
+        @inputText(book(year))
+        @inputText(book(code))
+        <div><input type="submit" value="Зарегистрировать"/></div>
+    }
+}
