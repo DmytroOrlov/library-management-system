@@ -22,9 +22,9 @@ object LmsControllerSpec extends MustMatchers {
     status(res) mustBe OK
     contentType(res) mustBe Some("text/html")
     contentAsString(res) must include("Home")
-    contentAsString(res) must include("Регистрация читателя")
+    contentAsString(res) must include("Зарегистрировать читателя")
     contentAsString(res) must include("Читатели")
-    contentAsString(res) must include("Добавить новую книгу")
+    contentAsString(res) must include("Добавить книгу в фонд")
     contentAsString(res) must include("Книги")
   }
 }

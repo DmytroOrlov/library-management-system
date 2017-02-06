@@ -81,12 +81,12 @@ object BookFundControllerSpec extends MustMatchers {
   def testAddBookPage(res: Future[Result]): Unit = {
     status(res) mustBe OK
     contentType(res) mustBe Some("text/html")
-    contentAsString(res) must include("Добавление новой книги")
+    contentAsString(res) must include("Добавление книги в фонд")
     contentAsString(res) must include("form")
     contentAsString(res) must include("author")
     contentAsString(res) must include("title")
     contentAsString(res) must include("year")
     contentAsString(res) must include("code")
-    contentAsString(res) must include("Добавить в фонд")
+    contentAsString(res) must include("Добавить книгу в фонд")
   }
 }

@@ -94,12 +94,12 @@ object VisitorControllerSpec extends MustMatchers {
   def testRegisterVisitorPage(res: Future[Result]): Unit = {
     status(res) mustBe OK
     contentType(res) mustBe Some("text/html")
-    contentAsString(res) must include("Регистрация")
+    contentAsString(res) must include("Регистрация читателя")
     contentAsString(res) must include("form")
     contentAsString(res) must include("firstName")
     contentAsString(res) must include("lastName")
     contentAsString(res) must include("middleName")
     contentAsString(res) must include("extraName")
-    contentAsString(res) must include("Зарегистрировать")
+    contentAsString(res) must include("Зарегистрировать читателя")
   }
 }
