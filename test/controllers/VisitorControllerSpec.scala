@@ -76,7 +76,7 @@ class VisitorControllerSpec extends PlaySpec with MustMatchers with MockitoSugar
       }
     }
     "takes registered request" should {
-      "return visitors" in {
+      "return registered visitors" in {
         def toJson = (v: Visitor) => Json.toJson(v).toString()
         val vsRepo = mock[VisitorRepo]
         val vs = immutable.Seq(Visitor("1", "2", None, None), Visitor("3", "4", None, None))

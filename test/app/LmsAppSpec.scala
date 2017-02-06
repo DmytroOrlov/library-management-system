@@ -36,7 +36,7 @@ class LmsAppSpec extends PlaySpec with MustMatchers with OneAppPerSuite with Sca
       "return it" in testRegisterVisitorPage(route(app, FakeRequest(GET, "/register")).get)
     }
     "takes registered request" should {
-      "return visitors" in {
+      "return registered visitors" in {
         val fName = Random.nextInt().toString
         val lName = Random.nextInt().toString
         register(fName, lName)
