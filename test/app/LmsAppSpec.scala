@@ -1,5 +1,6 @@
 package app
 
+import controllers.BookFundController._
 import controllers.BookFundControllerSpec.testAddBookPage
 import controllers.LmsControllerSpec._
 import controllers.VisitorController._
@@ -43,13 +44,30 @@ class LmsAppSpec extends PlaySpec with MustMatchers with OneAppPerSuite with Sca
       "return registered visitors" in {
         val fName = Random.nextInt().toString
         val lName = Random.nextInt().toString
-        register(fName, lName)
+        register(fName, lName).get.futureValue
         val res = route(app, FakeRequest(GET, "/registered")).get
         status(res) mustBe OK
         val jsons = s"""[${contentAsString(res).replace("}{", "},{")}]"""
         val vs = Json.fromJson[List[Visitor]](Json.parse(jsons)).get
         vs.exists {
-          case Visitor(`fName`, `lName`, _, _, _) => true
+          case Visitor(`fName`, `lName`, _, _, Some(_)) => true
+          case _ => false
+        } mustBe true
+      }
+    }
+    "takes books request" should {
+      "return added books" in {
+        val a = Random.nextInt().toString
+        val t = Random.nextInt().toString
+        val y = Random.nextInt()
+        val c = Random.nextInt().toString
+        addBook(a, t, y.toString, c).get.futureValue
+        val res = route(app, FakeRequest(GET, "/books")).get
+        status(res) mustBe OK
+        val jsons = s"""[${contentAsString(res).replace("}{", "},{")}]"""
+        val vs = Json.fromJson[List[Book]](Json.parse(jsons)).get
+        vs.exists {
+          case Book(`a`, `t`, `y`, `c`, Some(_)) => true
           case _ => false
         } mustBe true
       }
@@ -65,6 +83,22 @@ class LmsAppSpec extends PlaySpec with MustMatchers with OneAppPerSuite with Sca
           'lastName (lName),
           'middleName (None),
           'extraName (None)
+        )
+      }
+    }
+    "takes posted book" should {
+      "add one to db" in {
+        val a = Random.nextInt().toString
+        val t = Random.nextInt().toString
+        val y = Random.nextInt()
+        val c = Random.nextInt().toString
+        val res = addBook(a, t, y.toString, c).get
+        status(res) mustBe OK
+        Json.fromJson[Book](Json.parse(contentAsString(res))).get must have(
+          'author (a),
+          'title (t),
+          'year (y),
+          'code (c)
         )
       }
     }
@@ -112,6 +146,15 @@ class LmsAppSpec extends PlaySpec with MustMatchers with OneAppPerSuite with Sca
       lastName -> lName,
       middleName -> "",
       extraName -> ""
+    ))
+  }
+
+  def addBook(a: String, t: String, y: String, c: String): Option[Future[Result]] = {
+    route(app, FakeRequest(POST, "/book").withFormUrlEncodedBody(
+      author -> a,
+      title -> t,
+      year -> y,
+      code -> c
     ))
   }
 
