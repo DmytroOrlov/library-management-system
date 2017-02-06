@@ -24,5 +24,6 @@ object LmsControllerSpec extends MustMatchers {
     contentAsString(res) must include("Home")
     contentAsString(res) must include("Регистрация читателя")
     contentAsString(res) must include("Читатели")
+    contentAsString(res) must include("Добавить новую книгу")
   }
 }

@@ -1,5 +1,6 @@
 package app
 
+import controllers.BookFundControllerSpec.testAddBookPage
 import controllers.LmsControllerSpec._
 import controllers.VisitorController._
 import controllers.VisitorControllerSpec._
@@ -34,6 +35,9 @@ class LmsAppSpec extends PlaySpec with MustMatchers with OneAppPerSuite with Sca
     }
     "takes register visitor request" should {
       "return it" in testRegisterVisitorPage(route(app, FakeRequest(GET, "/register")).get)
+    }
+    "takes add book request" should {
+      "return it" in testAddBookPage(route(app, FakeRequest(GET, "/book")).get)
     }
     "takes registered request" should {
       "return registered visitors" in {

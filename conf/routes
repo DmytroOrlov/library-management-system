@@ -2,5 +2,6 @@ GET        /                        controllers.LmsController.home
 GET        /register                controllers.VisitorController.register
 POST       /register                controllers.VisitorController.postRegister
 GET        /registered              controllers.VisitorController.registered
+GET        /book                    controllers.BookFundController.add
 
 GET        /assets/*file            controllers.Assets.versioned(path="/public", file)
