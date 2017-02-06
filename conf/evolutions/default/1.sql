@@ -9,6 +9,17 @@ CREATE TABLE "visitor" (
   "created"     TIMESTAMP NOT NULL    DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE "book" (
+  "id"          SERIAL    PRIMARY KEY,
+  "author"      VARCHAR   NOT NULL,
+  "title"       VARCHAR   NOT NULL,
+  "year"        INTEGER   NOT NULL,
+  "code"        VARCHAR   NOT NULL,
+  "created"     TIMESTAMP NOT NULL    DEFAULT CURRENT_TIMESTAMP
+);
+
 # --- !Downs
 
 DROP TABLE "visitor" IF EXISTS;
+
+DROP TABLE "book" IF EXISTS;
