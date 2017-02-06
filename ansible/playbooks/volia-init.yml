@@ -1,0 +1,16 @@
+---
+- hosts: volia
+  remote_user: ubuntu
+  become: yes
+  tasks:
+    - apt_repository:
+        repo: deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main
+        state: present
+    - shell: apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886
+    - shell: echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
+    - apt: pkg=oracle-java8-installer state=latest update_cache=yes
+      notify:
+        - clean oracle-jdk8-installer
+  handlers:
+    - name: clean oracle-jdk8-installer
+      file: path='/var/cache/oracle-jdk8-installer' state=absent
