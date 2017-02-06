@@ -4,8 +4,8 @@ import controllers.BookFundControllerSpec.testAddBookPage
 import controllers.LmsControllerSpec._
 import controllers.VisitorController._
 import controllers.VisitorControllerSpec._
-import data.VisitorRepo
-import models.Visitor
+import data.{BookRepo, VisitorRepo}
+import models.{Book, Visitor}
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen
 import org.scalamock.scalatest.MockFactory
@@ -86,6 +86,24 @@ class LmsAppSpec extends PlaySpec with MustMatchers with OneAppPerSuite with Sca
         folded mustBe true
       }
     }
+    "add book" should {
+      "get added book in list" in forAll(books) { b =>
+        val bookRepo = inject.instanceOf[BookRepo]
+        val added = bookRepo.add(b).futureValue
+        added.id mustBe defined
+        added.copy(id = None) mustBe b
+
+        val (folded, _) = bookRepo.list.runFold(false -> Set.empty[Int]) {
+          case ((_, ids), Book(b.author, b.title, b.year, b.code, Some(id))) =>
+            ids.contains(id) mustBe false
+            true -> (ids + id)
+          case ((res, ids), Book(_, _, _, _, Some(id))) =>
+            ids.contains(id) mustBe false
+            res -> (ids + id)
+        }.futureValue
+        folded mustBe true
+      }
+    }
   }
 
   def register(fName: String, lName: String): Option[Future[Result]] = {
@@ -98,9 +116,16 @@ class LmsAppSpec extends PlaySpec with MustMatchers with OneAppPerSuite with Sca
   }
 
   val visitors: Gen[Visitor] = for {
-    f <- arbitrary[String]
-    l <- arbitrary[String]
-    m <- Gen.option(arbitrary[String])
-    e <- Gen.option(arbitrary[String])
-  } yield Visitor(firstName = f, lastName = l, middleName = m, extraName = e)
+    firstName <- arbitrary[String]
+    lastName <- arbitrary[String]
+    optMiddleName <- Gen.option(arbitrary[String])
+    optExtraName <- Gen.option(arbitrary[String])
+  } yield Visitor(firstName, lastName, optMiddleName, optExtraName)
+
+  val books: Gen[Book] = for {
+    author <- arbitrary[String]
+    title <- arbitrary[String]
+    year <- Gen.choose(1000, 2100)
+    code <- arbitrary[String]
+  } yield Book(author, title, year, code)
 }
