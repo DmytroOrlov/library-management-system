@@ -26,7 +26,7 @@ class BookRepoImpl @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit 
   import driver.api._
 
   class Books(tag: Tag) extends Table[Book](tag, "book") {
-    def id = column[Int]("id", O.AutoInc, O.PrimaryKey)
+    def id = column[Long]("id", O.AutoInc, O.PrimaryKey)
 
     def author = column[String]("author")
 

@@ -109,7 +109,7 @@ class LmsAppSpec extends PlaySpec with MustMatchers with OneAppPerSuite with Sca
         added.id mustBe defined
         added.copy(id = None) mustBe v
 
-        val (folded, _) = visitorRepo.list.runFold(false -> Set.empty[Int]) {
+        val (folded, _) = visitorRepo.list.runFold(false -> Set.empty[Long]) {
           case ((_, ids), Visitor(v.firstName, v.lastName, v.middleName, v.extraName, Some(id))) =>
             ids.contains(id) mustBe false
             true -> (ids + id)
@@ -127,7 +127,7 @@ class LmsAppSpec extends PlaySpec with MustMatchers with OneAppPerSuite with Sca
         added.id mustBe defined
         added.copy(id = None) mustBe b
 
-        val (folded, _) = bookRepo.list.runFold(false -> Set.empty[Int]) {
+        val (folded, _) = bookRepo.list.runFold(false -> Set.empty[Long]) {
           case ((_, ids), Book(b.author, b.title, b.year, b.code, Some(id))) =>
             ids.contains(id) mustBe false
             true -> (ids + id)

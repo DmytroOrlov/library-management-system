@@ -1,7 +1,7 @@
 # --- !Ups
 
 CREATE TABLE "visitor" (
-  "id"          SERIAL    PRIMARY KEY,
+  "id"          BIGSERIAL PRIMARY KEY,
   "first_name"  VARCHAR   NOT NULL,
   "last_name"   VARCHAR   NOT NULL,
   "middle_name" VARCHAR,
@@ -10,7 +10,7 @@ CREATE TABLE "visitor" (
 );
 
 CREATE TABLE "book" (
-  "id"          SERIAL    PRIMARY KEY,
+  "id"          BIGSERIAL PRIMARY KEY,
   "author"      VARCHAR   NOT NULL,
   "title"       VARCHAR   NOT NULL,
   "year"        INTEGER   NOT NULL,

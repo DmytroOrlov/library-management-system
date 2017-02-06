@@ -26,7 +26,7 @@ class VisitorRepoImpl @Inject()(dbConfigProvider: DatabaseConfigProvider)(implic
   import driver.api._
 
   class Visitors(tag: Tag) extends Table[Visitor](tag, "visitor") {
-    def id = column[Int]("id", O.AutoInc, O.PrimaryKey)
+    def id = column[Long]("id", O.AutoInc, O.PrimaryKey)
 
     def firstName = column[String]("first_name")
 
