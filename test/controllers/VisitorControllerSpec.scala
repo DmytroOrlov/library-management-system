@@ -33,12 +33,12 @@ class VisitorControllerSpec extends PlaySpec with MustMatchers with MockitoSugar
     }
     "takes posted visitor" should {
       "add one to db" in {
-        val vsRepo = mock[VisitorRepo]
+        val visitorRepo = mock[VisitorRepo]
         val fName = "1"
         val lName = "2"
         val visitor = Visitor(fName, lName, None, None)
-        vsRepo.add _ expects visitor returns Future.successful(visitor)
-        val controller = new VisitorController(vsRepo, mockito[MessagesApi])
+        visitorRepo.add _ expects visitor returns Future.successful(visitor)
+        val controller = new VisitorController(visitorRepo, mockito[MessagesApi])
         val res = controller.postRegister(
           FakeRequest(POST, "/register").withFormUrlEncodedBody(
             firstName -> fName,
@@ -78,10 +78,10 @@ class VisitorControllerSpec extends PlaySpec with MustMatchers with MockitoSugar
     "takes registered request" should {
       "return registered visitors" in {
         def toJson = (v: Visitor) => Json.toJson(v).toString()
-        val vsRepo = mock[VisitorRepo]
+        val visitorRepo = mock[VisitorRepo]
         val vs = immutable.Seq(Visitor("1", "2", None, None), Visitor("3", "4", None, None))
-        vsRepo.list _ expects() returns Source(vs)
-        val controller = new VisitorController(vsRepo, mockito[MessagesApi])
+        visitorRepo.list _ expects() returns Source(vs)
+        val controller = new VisitorController(visitorRepo, mockito[MessagesApi])
         val res = controller.registered(FakeRequest())
         status(res) mustBe OK
         contentAsString(res) mustBe vs.map(toJson).mkString

@@ -66,12 +66,12 @@ class LmsAppSpec extends PlaySpec with MustMatchers with OneAppPerSuite with Sca
     }
     "register visitor" should {
       "get registered visitor in list" in forAll(visitors) { v =>
-        val vsRepo = inject.instanceOf[VisitorRepo]
-        val added = vsRepo.add(v).futureValue
+        val visitorRepo = inject.instanceOf[VisitorRepo]
+        val added = visitorRepo.add(v).futureValue
         added.id mustBe defined
         added.copy(id = None) mustBe v
 
-        val (folded, _) = vsRepo.list.runFold(false -> Set.empty[Int]) {
+        val (folded, _) = visitorRepo.list.runFold(false -> Set.empty[Int]) {
           case ((_, ids), Visitor(v.firstName, v.lastName, v.middleName, v.extraName, Some(id))) =>
             ids.contains(id) mustBe false
             true -> (ids + id)
