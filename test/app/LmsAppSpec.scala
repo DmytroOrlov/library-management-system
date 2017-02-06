@@ -24,7 +24,7 @@ import scala.concurrent.duration._
 import scala.util.Random
 
 class LmsAppSpec extends PlaySpec with MustMatchers with OneAppPerSuite with ScalaFutures with PropertyChecks with MockitoSugar with MockFactory {
-  implicit val patience = PatienceConfig(1.second, 10.millis)
+  implicit val patience = PatienceConfig(1.second, 20.millis)
   implicit val mat = app.materializer
   val inject = app.injector
 
