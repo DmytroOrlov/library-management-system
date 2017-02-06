@@ -1,7 +1,7 @@
 GET        /                        controllers.LmsController.home
 GET        /register                controllers.VisitorController.register
 POST       /register                controllers.VisitorController.postRegister
-GET        /registered              controllers.VisitorController.registered
+GET        /visitors              controllers.VisitorController.visitors
 
 GET        /book                    controllers.BookFundController.add
 POST       /book                    controllers.BookFundController.postBook

@@ -75,14 +75,14 @@ class VisitorControllerSpec extends PlaySpec with MustMatchers with MockitoSugar
         status(res) mustBe BAD_REQUEST
       }
     }
-    "takes registered request" should {
+    "takes visitors request" should {
       "return registered visitors" in {
         def toJson = (v: Visitor) => Json.toJson(v).toString()
         val visitorRepo = mock[VisitorRepo]
         val vs = immutable.Seq(Visitor("1", "2", None, None), Visitor("3", "4", None, None))
         visitorRepo.list _ expects() returns Source(vs)
         val controller = new VisitorController(visitorRepo, mockito[MessagesApi])
-        val res = controller.registered(FakeRequest())
+        val res = controller.visitors(FakeRequest())
         status(res) mustBe OK
         contentAsString(res) mustBe vs.map(toJson).mkString
       }

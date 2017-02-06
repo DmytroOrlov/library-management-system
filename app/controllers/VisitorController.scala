@@ -13,7 +13,7 @@ import play.api.mvc._
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class VisitorController @Inject()(visitors: VisitorRepo, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
+class VisitorController @Inject()(visitorRepo: VisitorRepo, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
   val registerForm: Form[RegisterForm] = Form {
     mapping(
       firstName -> nonEmptyText,
@@ -27,8 +27,8 @@ class VisitorController @Inject()(visitors: VisitorRepo, val messagesApi: Messag
     Ok(views.html.register(registerForm))
   }
 
-  val registered = Action {
-    Ok.chunked(visitors.list)
+  val visitors = Action {
+    Ok.chunked(visitorRepo.list)
   }
 
   val postRegister = Action.async { implicit request =>
@@ -38,7 +38,7 @@ class VisitorController @Inject()(visitors: VisitorRepo, val messagesApi: Messag
     }, {
       case RegisterForm(f, l, m, e) =>
         def strToOption(s: String) = if (s.isEmpty) None else Some(s)
-        visitors.add(Visitor(f, l, strToOption(m), strToOption(e))).map { v =>
+        visitorRepo.add(Visitor(f, l, strToOption(m), strToOption(e))).map { v =>
           Ok(v)
         }
     })

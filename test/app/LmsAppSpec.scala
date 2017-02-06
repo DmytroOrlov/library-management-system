@@ -40,12 +40,12 @@ class LmsAppSpec extends PlaySpec with MustMatchers with OneAppPerSuite with Sca
     "takes add book request" should {
       "return it" in testAddBookPage(route(app, FakeRequest(GET, "/book")).get)
     }
-    "takes registered request" should {
+    "takes visitors request" should {
       "return registered visitors" in {
         val fName = Random.nextInt().toString
         val lName = Random.nextInt().toString
         register(fName, lName).get.futureValue
-        val res = route(app, FakeRequest(GET, "/registered")).get
+        val res = route(app, FakeRequest(GET, "/visitors")).get
         status(res) mustBe OK
         val jsons = s"""[${contentAsString(res).replace("}{", "},{")}]"""
         val vs = Json.fromJson[List[Visitor]](Json.parse(jsons)).get
