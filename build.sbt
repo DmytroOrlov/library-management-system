@@ -1,4 +1,4 @@
-lazy val playSlickV = "2.0.2"
+lazy val playSlickV = "3.0.2"
 
 lazy val `library-management-system` = (project in file("."))
   .enablePlugins(PlayScala)
