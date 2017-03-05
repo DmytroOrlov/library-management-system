@@ -4,7 +4,7 @@ lazy val `library-management-system` = (project in file("."))
   .enablePlugins(PlayScala)
   .settings(
     version := "1.0-SNAPSHOT",
-    scalaVersion := "2.11.8",
+    scalaVersion := "2.12.3",
     libraryDependencies ++= Seq(
       "com.typesafe.play" %% "play-slick" % playSlickV,
       "com.typesafe.play" %% "play-slick-evolutions" % playSlickV,
