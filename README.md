@@ -2,7 +2,7 @@
 
 One time server preparation (now only installs java 8)
 ```sh
-ansible-playbook ansible/playbooks/web-prepare.yml
+ansible-playbook ansible/playbooks/web-init.yml
 ```
 
 One time production config setup (now only generate and install secret)
