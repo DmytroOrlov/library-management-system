@@ -12,7 +12,7 @@ lazy val `library-management-system` = (project in file("."))
       "com.h2database" % "h2" % "1.4.193",
 
       "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test,
-      "org.scalamock" %% "scalamock-scalatest-support" % "3.2.2" % Test,
+      "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % Test,
       "org.mockito" % "mockito-core" % "2.7.0" % Test,
       "org.scalacheck" %% "scalacheck" % "1.12.6" % Test
     )
