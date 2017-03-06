@@ -7,13 +7,13 @@ import data.BookRepo
 import models.Book
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, Controller}
+import play.api.i18n.I18nSupport
+import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class BookFundController @Inject()(bookRepo: BookRepo, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
+class BookFundController @Inject()(bookRepo: BookRepo, components: ControllerComponents)(implicit ec: ExecutionContext) extends AbstractController(components) with I18nSupport {
   val addBookForm: Form[AddBookForm] = Form {
     mapping(
       author -> nonEmptyText,
@@ -23,7 +23,7 @@ class BookFundController @Inject()(bookRepo: BookRepo, val messagesApi: Messages
     )(AddBookForm.apply)(AddBookForm.unapply)
   }
 
-  val add = Action {
+  val add = Action { implicit request: Request[AnyContent] =>
     Ok(views.html.addBook(addBookForm))
   }
 
@@ -31,7 +31,7 @@ class BookFundController @Inject()(bookRepo: BookRepo, val messagesApi: Messages
     Ok.chunked(bookRepo.list)
   }
 
-  val postBook = Action.async { implicit request =>
+  val postBook = Action.async { implicit request: Request[AnyContent] =>
     addBookForm.bindFromRequest.fold(
     errorForm => {
       Future.successful(BadRequest(views.html.addBook(errorForm)))

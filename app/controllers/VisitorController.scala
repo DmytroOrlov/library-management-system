@@ -7,13 +7,13 @@ import data.VisitorRepo
 import models.Visitor
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class VisitorController @Inject()(visitorRepo: VisitorRepo, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
+class VisitorController @Inject()(visitorRepo: VisitorRepo, components: ControllerComponents)(implicit ec: ExecutionContext) extends AbstractController(components) with I18nSupport {
   val registerForm: Form[RegisterForm] = Form {
     mapping(
       firstName -> nonEmptyText,
@@ -23,7 +23,7 @@ class VisitorController @Inject()(visitorRepo: VisitorRepo, val messagesApi: Mes
     )(RegisterForm.apply)(RegisterForm.unapply)
   }
 
-  val register = Action {
+  val register = Action { implicit request: Request[AnyContent] =>
     Ok(views.html.register(registerForm))
   }
 
@@ -31,7 +31,7 @@ class VisitorController @Inject()(visitorRepo: VisitorRepo, val messagesApi: Mes
     Ok.chunked(visitorRepo.list)
   }
 
-  val postRegister = Action.async { implicit request =>
+  val postRegister = Action.async { implicit request: Request[AnyContent] =>
     registerForm.bindFromRequest.fold(
     errorForm => {
       Future.successful(BadRequest(views.html.register(errorForm)))
