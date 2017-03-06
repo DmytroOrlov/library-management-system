@@ -33,14 +33,14 @@ class BookFundController @Inject()(bookRepo: BookRepo, components: ControllerCom
 
   val postBook = Action.async { implicit request: Request[AnyContent] =>
     addBookForm.bindFromRequest.fold(
-    errorForm => {
-      Future.successful(BadRequest(views.html.addBook(errorForm)))
-    }, {
-      case AddBookForm(a, t, y, c) =>
-        bookRepo.add(Book(a, t, y, c)).map { b =>
-          Ok(b)
-        }
-    })
+      errorForm => {
+        Future.successful(BadRequest(views.html.addBook(errorForm)))
+      }, {
+        case AddBookForm(a, t, y, c) =>
+          bookRepo.add(Book(a, t, y, c)).map { b =>
+            Ok(b)
+          }
+      })
   }
 }
 

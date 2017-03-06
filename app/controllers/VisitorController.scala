@@ -33,15 +33,16 @@ class VisitorController @Inject()(visitorRepo: VisitorRepo, components: Controll
 
   val postRegister = Action.async { implicit request: Request[AnyContent] =>
     registerForm.bindFromRequest.fold(
-    errorForm => {
-      Future.successful(BadRequest(views.html.register(errorForm)))
-    }, {
-      case RegisterForm(f, l, m, e) =>
-        def strToOption(s: String) = if (s.isEmpty) None else Some(s)
-        visitorRepo.add(Visitor(f, l, strToOption(m), strToOption(e))).map { v =>
-          Ok(v)
-        }
-    })
+      errorForm => {
+        Future.successful(BadRequest(views.html.register(errorForm)))
+      }, {
+        case RegisterForm(f, l, m, e) =>
+          def strToOption(s: String) = if (s.isEmpty) None else Some(s)
+
+          visitorRepo.add(Visitor(f, l, strToOption(m), strToOption(e))).map { v =>
+            Ok(v)
+          }
+      })
   }
 }
 
