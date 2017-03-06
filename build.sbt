@@ -6,6 +6,7 @@ lazy val `library-management-system` = (project in file("."))
     version := "1.0-SNAPSHOT",
     scalaVersion := "2.12.3",
     libraryDependencies ++= Seq(
+      guice,
       "com.typesafe.play" %% "play-slick" % playSlickV,
       "com.typesafe.play" %% "play-slick-evolutions" % playSlickV,
       "org.postgresql" % "postgresql" % "9.4-1201-jdbc41",
