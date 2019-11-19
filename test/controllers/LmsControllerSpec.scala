@@ -12,7 +12,7 @@ import scala.concurrent.Future
 class LmsControllerSpec extends PlaySpec with MustMatchers {
   "Lms controller" when {
     "takes home page request" should {
-      "return it" in testHomePage((new LmsController).home(FakeRequest()))
+      "return it" in testHomePage((new LmsController(stubControllerComponents())).home(FakeRequest()))
     }
   }
 }

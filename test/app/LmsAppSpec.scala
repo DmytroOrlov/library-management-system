@@ -14,6 +14,7 @@ import org.scalatest.MustMatchers
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.time.Span._
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import org.scalatestplus.play.{OneAppPerSuite, PlaySpec}
 import play.api.libs.json.Json
 import play.api.mvc.Result
@@ -25,7 +26,7 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.util.Random
 
-class LmsAppSpec extends PlaySpec with MustMatchers with OneAppPerSuite with ScalaFutures with PropertyChecks with MockitoSugar with MockFactory {
+class LmsAppSpec extends PlaySpec with GuiceOneAppPerSuite with ScalaFutures with PropertyChecks with MockitoSugar with MockFactory {
   implicit val patience = PatienceConfig(1.second, 20.millis)
   implicit val mat = app.materializer
   val inject = app.injector
@@ -79,10 +80,10 @@ class LmsAppSpec extends PlaySpec with MustMatchers with OneAppPerSuite with Sca
         val res = register(fName, lName).get
         status(res) mustBe OK
         Json.fromJson[Visitor](Json.parse(contentAsString(res))).get must have(
-          'firstName (fName),
-          'lastName (lName),
-          'middleName (None),
-          'extraName (None)
+          'firstName(fName),
+          'lastName(lName),
+          'middleName(None),
+          'extraName(None)
         )
       }
     }
@@ -95,10 +96,10 @@ class LmsAppSpec extends PlaySpec with MustMatchers with OneAppPerSuite with Sca
         val res = addBook(a, t, y.toString, c).get
         status(res) mustBe OK
         Json.fromJson[Book](Json.parse(contentAsString(res))).get must have(
-          'author (a),
-          'title (t),
-          'year (y),
-          'code (c)
+          'author(a),
+          'title(t),
+          'year(y),
+          'code(c)
         )
       }
     }

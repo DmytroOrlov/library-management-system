@@ -1,11 +1,10 @@
 package controllers
 
-import javax.inject.Singleton
-
+import javax.inject.{Inject, Singleton}
 import play.api.mvc._
 
 @Singleton
-class LmsController extends Controller {
+class LmsController @Inject()(val controllerComponents: ControllerComponents) extends BaseController {
   val home = Action {
     Ok(views.html.home())
   }

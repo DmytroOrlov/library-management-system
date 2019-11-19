@@ -10,23 +10,23 @@ import models.Book
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.MustMatchers
 import org.scalatestplus.play.PlaySpec
-import play.api.i18n.MessagesApi
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.Json
-import play.api.mvc.Result
+import play.api.mvc.{ControllerComponents, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import util.{MockMessagesApi, MockitoSugar}
+import util.MockitoSugar
 
 import scala.collection.immutable
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class BookFundControllerSpec extends PlaySpec with MustMatchers with MockitoSugar with MockFactory {
+class BookFundControllerSpec extends PlaySpec with MustMatchers with MockitoSugar with MockFactory with GuiceOneAppPerSuite {
   implicit val mat = ActorMaterializer()(ActorSystem())
 
   "BookFund controller" when {
     "takes add book page request" should {
-      "return it" in testAddBookPage(new BookFundController(mockito[BookRepo], mockito[MessagesApi]).add(FakeRequest()))
+      "return it" in testAddBookPage(new BookFundController(mockito[BookRepo], stubControllerComponents()).add(FakeRequest()))
     }
     "takes posted book" should {
       "add one to db" in {
@@ -37,7 +37,7 @@ class BookFundControllerSpec extends PlaySpec with MustMatchers with MockitoSuga
         val c = "a1"
         val book = Book(a, t, y, c)
         bookRepo.add _ expects book returns Future.successful(book)
-        val controller = new BookFundController(bookRepo, mockito[MessagesApi])
+        val controller = new BookFundController(bookRepo, stubControllerComponents())
         val res = controller.postBook(
           FakeRequest(POST, "/book").withFormUrlEncodedBody(
             author -> a,
@@ -50,7 +50,7 @@ class BookFundControllerSpec extends PlaySpec with MustMatchers with MockitoSuga
         contentAsString(res) mustBe Json.toJson(book).toString
       }
       "reject string year" in {
-        val controller = new BookFundController(mock[BookRepo], MockMessagesApi)
+        val controller = new BookFundController(mock[BookRepo], stubControllerComponents())
         val res = controller.postBook(
           FakeRequest(POST, "/book").withFormUrlEncodedBody(
             author -> "a",
@@ -65,10 +65,11 @@ class BookFundControllerSpec extends PlaySpec with MustMatchers with MockitoSuga
     "takes books request" should {
       "return added bookds" in {
         def toJson = (v: Book) => Json.toJson(v).toString()
+
         val bookRepo = mock[BookRepo]
         val vs = immutable.Seq(Book("a1", "t1", 2016, "c1"), Book("a2", "t2", 2017, "c2"))
-        bookRepo.list _ expects() returns Source(vs)
-        val controller = new BookFundController(bookRepo, mockito[MessagesApi])
+        (bookRepo.list _).expects().returns(Source(vs))
+        val controller = new BookFundController(bookRepo, mockito[ControllerComponents])
         val res = controller.books(FakeRequest())
         status(res) mustBe OK
         contentAsString(res) mustBe vs.map(toJson).mkString
